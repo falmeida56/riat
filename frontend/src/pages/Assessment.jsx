@@ -64,9 +64,12 @@ const Assessment = () => {
                     const savedSelection = localStorage.getItem(`dimension_selection_${id}`);
                     if (savedSelection) {
                         setSelectedDimensionIds(JSON.parse(savedSelection));
+                        // If dimensions already selected, go to assessment
+                        setStep(5);
+                    } else {
+                        // If no dimensions selected yet, go to dimension selection
+                        setStep(4.5);
                     }
-                    
-                    setStep(5);
 
                 } catch (error) {
                     alert(error);
