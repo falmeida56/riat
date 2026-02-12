@@ -58,8 +58,8 @@ const Footer = () => {
                     <div className="d-flex flex-column align-items-end justify-content-end ms-2">
                         <div className="d-flex flex-row justify-content-between align-items-center mb-2">
                             <img
-                                src="/SoTecIn_Logo_Horizontal.png"
-                                alt="SoTecIn_Logo_Horizontal"
+                                src="/FireRes_logo_300x75.png"
+                                alt="FireRes_Logo"
                                 className="mx-4"
                                 style={{ width: '10rem' }}
                             />
@@ -83,8 +83,8 @@ const Footer = () => {
                         </div>
                         <div className="d-flex flex-row align-items-center justify-content-end me-4">
                             <img
-                                src="/SoTecIn_Logo_Horizontal.png"
-                                alt="SoTecIn_Logo_Horizontal"
+                                src="/FireRes_logo_300x75.png"
+                                alt="FireRes_Logo"
 
                                 style={{ width: '10rem' }}
                             />
