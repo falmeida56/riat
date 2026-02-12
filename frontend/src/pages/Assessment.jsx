@@ -303,7 +303,6 @@ const Assessment = () => {
         
         setError('');
         setStep(5);
-        navigate('/projects/');
     };
 
 
