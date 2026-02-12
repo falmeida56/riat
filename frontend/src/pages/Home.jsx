@@ -29,7 +29,7 @@ const Home = () => {
             <div className='w-100 text-center'>
                 <img
                     src="/landing_page_img.png"
-                    alt="SoTecIn Factory"
+                    alt="Innovation Assessment"
                     className='w-100'
                 />
             </div>
