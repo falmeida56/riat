@@ -1,0 +1,698 @@
+Reestruturação RIAT
+Thu, Feb 5, 2026
+
+0:00 - Gabriel Martins Rosa#+#Vasco Amorim
+Não é o caos, porque a gente, de comparação com a Leiria, está no céu, mas...
+
+0:04 - Cristina Machado Guimarães#+#Gabriel Martins Rosa
+Sim, sim. Olá Gabriel, bom dia.
+
+0:07 - Cristina Maria Barbosa#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Olá, bom dia.
+
+0:09 - Gabriel Martins Rosa
+Bom dia a todos.
+
+0:11 - Cristina Maria Barbosa#+#Gabriel Martins Rosa
+Tudo bem?
+
+0:12 - Cristina Maria Barbosa#+#Gabriel Martins Rosa#+#Vasco Amorim
+Então, começando pelo princípio.
+
+0:14 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Na última reunião que nós tivemos, eu fiquei 100% bem quando o Fernando disse que havia algumas barreiras de utilização em relação ao nosso REACT e eu não me lembro exatamente o que é que foi, porque entretanto não se percebeu direito a conversa e houve conversas cruzadas e eu queria voltar a esse tema.
+
+0:36 - Cristina Machado Guimarães#+#Gabriel Martins Rosa
+Quais são as principais dificuldades que vocês veem do instrumento conforme ele está, o REACT conforme ele está? Posso começar?
+
+0:42 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Sim, por favor. Então até vou ser muito breve também. Acho que a aplicação está bastante bem construída e acho que do ponto de vista científico é uma boa base e, portanto, Eu não alteraria em termos de back-end, em termos de processo, mas acho que há algumas situações que realmente condicionam muito a sua adesão, principalmente para um público menos especializado. O que é que se passa? Em primeiro lugar, o Ernesto vai testar esta semana, e ainda hoje, antes da reunião, e detecta aí que há algum outro bug, mas que é normal, porque pode ser relativamente rugido. Isso não me preocupa muito. O que me preocupa claramente é que nós temos 16 dimensões, em termos de REACT, e percebemos rapidamente que preencher um enquete com 16 dimensões pode se tornar extremamente longo.
+
+1:27 - Fernando Luis Ferreira de Almeida
+E, portanto, temos que encontrar estratégias para mitigar esse problema. Uma das soluções já implementadas na própria aplicação, mas que não é muito intuitiva, é a questão da escolha das dimensões.
+
+1:37 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Ou seja, eu realizar o enquete, mas não considerar todas as dimensões.
+
+1:41 - Fernando Luis Ferreira de Almeida
+O que é que se passa?
+
+1:43 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Para mim, esse passo não é claramente intuitivo.
+
+1:45 - Fernando Luis Ferreira de Almeida
+E há também alguns bugs assim, pelo menos no meu browser. Não sei se em todos ou não, mas no meu browser aconteceu.
+
+1:53 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Eu testei com o Google Drive e com o Opera e tive problemas similares. Estão exatamente iguais, mas similares.
+
+1:58 - Fernando Luis Ferreira de Almeida
+E, portanto, para mim parece-me importante que existisse algo, do ponto de vista gráfico, que soubesse, claro, que existem diversas dimensões, mas que eles podem escolher os que quiserem, eventualmente até uma ou duas, ok?
+
+2:09 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+E acho que isso seria um fato importante.
+
+2:11 - Fernando Luis Ferreira de Almeida
+Mas isso não podem para já?
+
+2:13 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Para já não é possível fazer isso?
+
+2:15 - Cristina Machado Guimarães
+Sim, mas é possível tornar.
+
+2:16 - Fernando Luis Ferreira de Almeida
+É uma questão do front-end, nem sequer muda nada no back-end.
+
+2:20 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Nesse momento é possível, mas estou a dizer por alterações, ok?
+
+2:23 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Ah, não tinha possível, porque tinhas tentado e não tinhas conseguido, ok, ok, ok. Exatamente, ok?
+
+2:28 - Fernando Luis Ferreira de Almeida
+Mas eu acho que era importante, tipo, ter apenas uma janela, por exemplo, com oito hipóteses de um lado e oito dimensões do outro, e fazer um check daquelas dimensões que nós queremos. Acho que isso tornava a questão muito mais intuitiva.
+
+2:41 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+E depois, perceber quanto tempo é que demora para encher ter uma estimativa inicial. Por exemplo, pensar que uma dimensão demora, por exemplo, dois minutos. Então, se eu usar duas dimensões, demora quatro minutos. Se usar 16, vai demorar, por exemplo, 32 minutos. Isso é importante perceber logo à partida quanto tempo irá demorar a preencher o inquérito. E depois, ao longo do processo, ter também, digamos, uma evolução do próprio estado das respostas. Eu acho que essas alterações muito pontuais, que é mais de design, propriamente de conteúdo, não muda nada, em termos de back-end, acho que seria muito importante e tornaria realmente muito mais simples a adesão. E era apenas isso, está bem? Porque eu acho que em termos de back-end não mudaria muito nada.
+
+3:22 - Cristina Machado Guimarães#+#Gabriel Martins Rosa
+Um pouco tu diz a parte da escolha, ou seja, de que forma é que a pessoa decidia, para escolher, a pessoa tem que saber o que é que está a escolher.
+
+3:29 - Cristina Machado Guimarães#+#Gabriel Martins Rosa1
+No início aparecia tudo explicado e a pessoa escolhia? Eu acho que muito simples.
+
+3:32 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Eu utilizo muito ambientes mobile e esse tipo de situações de design mesmo que eu dou aos meus alunos e eu acho que uma coisa muito simples é ter uma janela com as intervenções, oito lado e oito do oito, oito de um lado e oito do outro lado, direita e esquerda, e basicamente um check de quais as dimensões, e depois perceber quanto tempo é que demoraria ao selecionar as dimensões. Apenas isso, uma coisa muito simples, ok? O importante é ter coisas muito simples. O complicado é fazer as coisas simples nessa área. Ok.
+
+3:59 - Cristina Machado Guimarães#+#Gabriel Martins Rosa1
+A dificuldade da malta escolher, vamos dizer que testar a ideal é alta, mas a da pessoa escolher é saber o que é que ela está a escolher. Ou seja, nós sabemos quais são as dimensões, mas a pessoa quando vai escolher, quando aparece o reato, eu vou dar a palavra ao Gabriel, que se calhar ele também tem essas questões. Quando vai escolher, como é que sei que eu quero aquela e não quero outra?
+
+4:20 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Sim, mas isso pode ter um texto por cima da cada dimensão, que aparece quando está em cima da dimensão, escolher cada um deles.
+
+4:26 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Nós temos, sim. Já tem. Tem, mas tem outro tipo de design, digamos assim.
+
+4:30 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Nós já temos as coisas, mas não temos as coisas devidamente em termos intuitivos, ok?
+
+4:34 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+E esse é o grande problema, também em perspectiva.
+
+4:37 - Gabriel Martins Rosa1
+Sim, eu ia questionar relativamente à última coisa que o Fernando disse, relativamente a acompanhar o Estado, ou seja, se seria uma barra de progresso ou alguma coisa do género. Isso já está.
+
+4:45 - Cristina Machado Guimarães#+#Gabriel Martins Rosa1
+É que, por acaso, eu acho que isso já tem, se não estou a um erro.
+
+4:49 - Gabriel Martins Rosa1
+Isso já tem.
+
+4:49 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Sim, eu acho que isso já tem, eu acho que isso nem sequer era alterar. Além disto, que me parece importante, mas isso já tem.
+
+4:55 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Sim, já tem.
+
+4:56 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+Eu acho que seria mais importante ter essa melhor passo.
+
+4:58 - Cristina Machado Guimarães#+#Gabriel Martins Rosa1
+Mas nós sabemos quanto é que o comum mortal demora, isso nós sabemos, temos o progresso quando temos o tempo.
+
+5:05 - Gabriel Martins Rosa1
+Eu também tinha uma pergunta, eu não sei se é pertinente para esta fase ou não, relativamente à questão de quando o utilizador escolhe as dimensões que eventualmente quer utilizar ou não, isso eventualmente vai ter que implicar alguma reformulação no backend também, mas eu pensei, talvez haver uma espécie de utilizador pré-definido ou esquema pré-definido para um tipo de categoria que o utilizador pode querer testar, ou seja, dependendo se está numa espécie de investigação de uma área, se calhar pode ser mais alocado para algumas dimensões, ou pelo menos fazer essa sugestão. Eu não sei se lhe acham pertinente, se calhar seria preciso fazer algum estudo anterior a realmente definir o que é que poderia ser mais indicado para cá, mas se calhar poderia pelo menos indicar uma proposta de valor mais concreta para um utilizador, do que ser uma coisa que se calhar pode ser considerada muito abrangente como está agora, não tenho a certeza.
+
+6:02 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa1
+a minha opinião, porque eu pensei exatamente nisso antes.
+
+6:05 - Fernando Luis Ferreira de Almeida
+Até porque essa parte de inovação responsável, a maioria dos autores, e eu critico muito do ponto de vista científico, consideram apenas três dimensões, não é? E, portanto, eu acho que eu pensei numa hipótese que era obrigar a ter aquelas três dimensões, mas depois pensei, porque é que vamos obrigar? Podemos sugerir, é verdade, mas isso é um trabalho que nós não temos nesse momento. Eu acho que é interessante ter, tipo, um sistema de boa decisão nesse nível, sem dúvida, mas eu acho que nós não conseguimos ter uma resposta no tempo.
+
+6:31 - Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Eu acho que querem mais em termos de evolução, mas parece-me pertinente a ideia.
+
+6:37 - Cristina Machado Guimarães#+#Gabriel Martins Rosa
+Ó Fernando, agora que falaste das três, eu pensava que eram quatro por causa da responsiveness.
+
+6:44 - Cristina Machado Guimarães
+Essa não conta como seminal?
+
+6:46 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Na maioria dos artigos da base, não.
+
+6:49 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+Depois há evolução, mas o modelo lá são três.
+
+6:53 - Cristina Machado Guimarães#+#Gabriel Martins Rosa
+Porque o que nós fizemos foi colocar uma série de dimensões dentro Na reflexão, nós colocamos o conjunto de dimensões, que são instrumentais, dédicas, dentro da reflexão. Mas não está na proposta inicial.
+
+7:08 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Gabriel Martins Rosa
+É preciso perceber que a proposta inicial de inovação responsável surgiu em 2013, e desde daí houve muitas evoluções.
+
+7:17 - Fernando Luis Ferreira de Almeida
+Na versão inicial foram apenas três.
+
+7:20 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Depois aquela evolução surgiu mais tarde. Sim, sim. No reato é que nós pusemos, exatamente.
+
+7:27 - Cristina Machado Guimarães
+Claro, claro. Mas dentro de uma, ou seja, nós tentamos fazer dois em um, ou seja, não tem uma pergunta sobre reflexivity, tem quatro perguntas de reflexivity, cada uma com uma dimensão, subdimensão, digamos assim. Sim, mas o modelo é tudo assim, não é?
+
+7:47 - Fernando Luis Ferreira de Almeida
+Temos várias perguntas por cada uma das manifestos, portanto é consistente. Sim, sim, sim.
+
+7:55 - Cristina Machado Guimarães
+Estou a dizer no caso de agruparmos dimensões, porque ao retirar dimensões, a pessoa pode não querer responder à parte ética, mas ao não responder à parte ética, à dimensão ética, deixa de responder a uma das dimensões seminais, que é a reflexivity. Não necessariamente.
+
+8:10 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Podemos retirar alguma. Do ponto de vista científico, aparentemente sim. Do ponto de vista técnico, não sei se fará bem assim. Ele pode ter respondido já anteriormente.
+
+8:22 - Fernando Luis Ferreira de Almeida
+Ah, mas isso não volta a responder.
+
+8:25 - Cristina Machado Guimarães
+Quando ele volta ao... Nós até podemos pô-lo aqui e partilhar.
+
+8:31 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Mas volta a responder. Se quiser responder a uma demanda que já tinha respondido, posso.
+
+8:39 - Fernando Luis Ferreira de Almeida
+Podes, mas podes passar à frente também.
+
+8:43 - Unidentified Speaker
+Pois posso. Ok.
+
+8:45 - Vasco Amorim1
+Olhem, eu treino... Outra ideia que poderíamos eventualmente explorar, que era o seguinte, eventualmente chega um ponto em que as pessoas já não conseguem haver inquéritos à frente. Então, porque não utilizar, por exemplo, a ferramenta de uma outra forma, que é, por exemplo, as pessoas faziam, ou em âmbito ainda de proposta, de projeto ou de trabalho, ou já na fase dos derivables, por exemplo, aqui sobre várias partes, aplicar uma ferramenta, aplicando um LLM, para analisar como o nosso, digamos assim, guião de avaliação destas dimensões, documentos que já estavam escritos, as pessoas não tinham que ter, digamos assim, um esforço adicional, mas recebiam um relatório baseado nas nossas dimensões, que conseguíamos detectar através de um sistema de da LEM, da Inteligência Artificial, aplicado documentos que já tinham sido produzidos, por obrigatoriedade, ou por candidatura, ou por relatórios, parcelares, ou assim. Não seria uma coisa engraçada tentar, eventualmente? Embora seja uma coisa diferente, claro.
+
+9:55 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim1
+Posso responder muito rapidamente, porque eu acho muito interessante essa ideia, só que realmente isso é um projeto para um aluno de doutoramento ou para um mestrado.
+
+10:04 - Fernando Luis Ferreira de Almeida
+Agora, muito interessante, é verdade.
+
+10:06 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim1
+E eu sou muito crítico em relação a isso.
+
+10:10 - Fernando Luis Ferreira de Almeida
+tinha uma apresentação com alunos meus e a IA, os alunos olham para a IA de uma maneira que eu detesto. Que é, não fazem trabalho nenhum e depois dizem que a IA vai fazer o trabalho deles.
+
+10:20 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Não, não é verdade. Bem pelo contrário, não é? E para alguns alunos, não é? Que acham que a IA vai resolver, não é?
+
+10:26 - Fernando Luis Ferreira de Almeida
+Não fizeram o projeto, mas dizem que a IA vai resolver.
+
+10:29 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Então é uma coisa abstrata que coloca-se em cima e que resolve o trabalho que ninguém fez. Não é verdade, não é? Como sabem, não é? Mas é muito interessante a ideia.
+
+10:38 - Vasco Amorim
+Era capaz de ser interessante, porque assim, nós temos de avaliar, claro, com o espírito crítico, não é? Mas, se víssemos de que forma é que a Inteligência Artificial consegue absorver as dimensões que nós estivemos a explorar e a selecionar, etc. E, analisando os textos, conseguindo reconhecer num texto que já foi produzido pelos investigadores, se tinha ou não aquelas dimensões, Isso pelo menos se devia, de forma rápida, alertar o investigador, por exemplo, não reconhecia determinadas dimensões que se calhar valia a pena acrescentar ou refletir. É mais nesse sentido de auxiliar, não de fazer um trabalho do investigador, no sentido de alertar ou auxiliar. Muitas vezes acontece que, de facto, as pessoas nem sequer quando estão a refletir, nem sequer fazem um pensamento por dimensões, que estão agora muito detalhadas, E era uma das coisas que, se calhar, pronto, se pode tentar fazer uma exploração, não? Talvez, claro, que parece ser outro trabalho, não é? Claramente outro trabalho. Eu ando um bocado com esta ideia porque nós não vamos poder fugir à IA, à Inteligência Artificial, e ao mesmo tempo é preciso, digamos, trabalhar no sentido de ensinar estes modelos de linguagem padrões, no fundo, não é? É isso que ela faz. Eu, por exemplo, tive uma experiência aqui atrasada, só para vocês verem. Eu tenho... Agora, por acaso, sou com vice-diretor de curso, mas estive nos últimos quatro anos diretor de curso e tenho que fazer um raio de um relatório anual, que é analisar 35 relatórios de unidades curriculares da licenciatura. Epá, eu peguei todos os relatórios da meti na Inteligência Artificial e pedi pontos fortes, pontos fracos do curso e tal, e ele não só me identificou de forma muito resumida logo quais eram os pontos fortes e os pontos fracos, porque havia uma análise suada para cada disciplina, como ainda por cima, para cada frase que foi retirada e que ele compôs no texto, me assinalou quem era a disciplina ou o docente que tinha feito essa análise.
+
+12:57 - Vasco Amorim
+Eu depois comecei a ler, não é o relatório gerado, mas quer dizer, eu fiz aquilo, não sei se demorou um minuto. Foi super rápido. Eu se tivesse que ler aquilo tudo e andar eu a fazer aquilo, eu não demorava um minuto. Eu não sei, se calhar demorava duas horas ou mais. Portanto, 35 relatórios, só abrir e ir ler aquele campo e passar para um documento. Portanto, eu vejo que há algum potencial de... Nós criarmos um framework que a Inteligência Artificial vai beber para depois ter um referencial para analisar os textos. E eu acho que isso ela faz relativamente mais rápido e pode nos dar um primeiro relatório que poupava tempo, no sentido de ser o investigador ler o questionário e depois estar ele a pensar o que é que eu pensei, o que é que eu escrevi, percebes? Era esta, um bocado, esta a ideia. Mas é uma ideia só, mais nada.
+
+13:53 - Unidentified Speaker
+Sim, posso-lhe responder muito rapidamente.
+
+13:54 - Fernando Luis Ferreira de Almeida
+Sim, sem dúvida. A ideia é excelente e eu gosto muito disso, aliás, eu uso a IA bastante até. Eu, quando digo que sou crítico, é no sentido da IA, muitos dos alunos olham para aquilo como uma caixa negra, não é?
+
+14:05 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Isso é verdade. E é costado a dizer, e eu também uso a esse nível, mas para...
+
+14:09 - Fernando Luis Ferreira de Almeida
+Há uma preparação dos datasets, há uma construção do objetivo, há uma interrogação, não é? Há um processo de aprendizagem, não é? Chegar lá, deixar as coisas depois e ir buscar o output, não é? Eu tive um caso, só para perceberem como as coisas são mágicos, alguns alunos não sabem me aplicar. Eu tive um caso de um aluno que entregava um relatório de base de dados, ok? Ele sabia que eu tinha escrito vários livros sobre o assunto e então perguntou no chat do CPT para colocar a bibliografia, ok? O que é que aconteceu? Ele inventou livros que eu nunca tinha escrito. E ele apresentou o trabalho assim, com livros que eu nunca escrevi. Claro, claro. E ainda prestou uma ópera ópera, é muito bom.
+
+14:46 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Exatamente, claro, não é? Claro, claro. Isto dá um mau uso da I.A. Há bom luvo e mau luvo, a questão não é essa, não é?
+
+14:55 - Cristina Machado Guimarães#+#Vasco Amorim
+Podia ser assim por todas as coisas.
+
+14:58 - Vasco Amorim
+Eu já fui Presidente da Comissão de Ética aqui da Universidade, da UTAP, e sei o trabalho que aquilo dá e a maneira como se faz tradicional, não é? E claro, é difícil, porque cada projeto é diferente, há uns que são mais ou menos do mesmo tipo, mas depois há outros que são bastante diferentes. E ainda estou numa comissão de ética, da saúde, da unidade local de saúde aqui de Trás-os-Montes e Autodouro, que é aqui do hospital. Também um parte são médicos, enfermeiros, farmacêuticos, depois tem uma pessoa a ligar a um juiz, estou eu, dou manifesto a outro colega também, pronto, só para ter e-mail. Enfermeiros, pronto, para e farma. São uns pais, uns 11 ou assim. E um dos trabalhos que e o que temos que fazer é… estamos a ler os processos e ver em que parte do projeto se fala sobre reflexão ética, por exemplo. E há alguns que nem têm, outros que têm uma coisa muito sucinta, quer dizer, estamos muito longe destas dimensões todas. Quer dizer, eu acho que se eles tivessem uma ferramenta que pudesse os auxiliar a construir, não é? Porque o orientador depois também não tem tempo. Aliás, eles às vezes até mandam os trabalhos de investigação, sem os orientadores verem. E, aliás, mandam sem a carta, porque há dois tipos. Há os que mandam o trabalho com uma carta do orientador, que é o responsável científico, mas não leram nem o projeto, não leram nada, nem os ferramentas, não leram nada. Porque a gente vai ver aqui o tatamol que só há uma possibilidade de não ter visto, desde erros de português até outras coisas mais. E depois Há aqueles que mandam porque querem despachar o trabalho, querem ter iniciativa, não conseguem falar com o orientador, que é uma coisa, infelizmente, muito frequente, e, portanto, não têm apoio. E, não sei, acho que haveria… no caso da ética, até é complicado porque as pessoas não gostam muito de regular, não é? De estruturar, não é? Ainda agora tive naquele seminário, aquela tutela AI, não sei se viste à distância, Fernando, não vi se tu estavas à distância… Sim, vi.
+
+17:08 - Unidentified Speaker
+Estavas?
+
+17:08 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Pronto. E viste que se falou lá que, pronto, tradicionalmente não gostam muito de criar balizas e de criar guiões e frameworks porque querem uma análise muito aberta, não é?
+
+17:18 - Vasco Amorim
+Mas é lenta, uma análise muito aberta é lenta. E, portanto, não sei, há aqui alguns espaços, digo eu, que se poderá fazer qualquer coisa a mais. Não necessariamente para este artigo, não é para este projeto, mas eventualmente em paralelo. Pronto, andando aqui com um bocado com esta ideia. Por outro lado, só em atalho Quando estivemos nesta turtula AI, aquilo da Responsive AI foi muito baseada na parte de hardware, software, não é? E não tanto nas dimensões que nós tivemos, que temos tentado a construir. Aliás, tinha falado com a Cristina e disse que se calhar nós aqui podíamos fazer aqui uma contribuição. Sim. Mas fomos ver primeiro como é que era, não é? E aquilo era muito hardware, software e back office, um bocado até back office.
+
+18:07 - Cristina Machado Guimarães#+#Vasco Amorim
+não é? Sim. E não tanto sobre as dimensões, portanto, se tiveste a oportunidade de ver, Fernando, quase não falaram das dimensões todas que nós já analisamos.
+
+18:18 - Vasco Amorim
+Pronto, era isso, era a minha dica.
+
+18:21 - Cristina Machado Guimarães
+Isso faz-me colocar a questão, um projeto que utilize um instrumento destes, versus um projeto que não o utilize, que vantagens tem o primeiro? Eu sei que estou a começar pelo princípio, mas a gente tem que voltar atrás e começar a pensar pelo princípio, porque só a partir dessas vantagens é que a gente consegue fazer algo de útil, utilizável e com as dificuldades que temos de arranjar, ok.
+
+18:50 - Vasco Amorim
+Eu até não sei se do ponto de vista, por exemplo, imagina da União Europeia, se tinha interesse os projetos europeus terem uma ferramenta que auxilia, se eles como é que se chama aquilo? Não é bem formulário, é uma espécie de um guião em que tem perguntas para os investigadores fazerem, na parte de ética, se utilizar amostras biológicas ou não, se não sei o quê, tem assim um… eu agora não me recordo ao certo, mas sei que tem para aí duas ou três páginas, pelo menos, de perguntas. Agora para os projetos, Horizon, em geral, acho que é um formulário que que as pessoas têm que preencher ou que eles têm que ler para ver se se aplica e tal. E se calhar podia ser mais longe. Podia ser uma ferramenta mais interativa.
+
+19:38 - Cristina Machado Guimarães
+Mas a questão é, a Comissão pede a parte ética, sigam ou não, e a malta quando é não segue para bingo e está o assunto arrumado, porque não mexe com bichos, não mexe com gente, pronto. E está, da cabeça das pessoas, está a parte ética arrumada. Certo. É isso.
+
+19:53 - Cristina Machado Guimarães#+#Vasco Amorim
+E querem-se ver livre rapidamente esse tipo Eu estou a tentar pensar pela cabeça de quem está a fazer os projetos.
+
+20:00 - Cristina Machado Guimarães
+É verdade.
+
+20:01 - Cristina Machado Guimarães#+#Vasco Amorim
+Nós temos essa divisão ética, mas temos as outras todas.
+
+20:04 - Cristina Machado Guimarães
+A partir do momento em que as outras todas também entram, ou pelo menos as três iniciais, onde é que nós fazemos criar pertinência para que elas sejam cobertas num projeto europeu, por exemplo, e se isso traz mais valias para uma candidatura e depois para uma execução que são duas fases distintas.
+
+20:25 - Vasco Amorim
+É assim, eu penso que tudo que hoje em dia aumenta a eficiência do nosso pensamento, que nos, por exemplo, isto hoje em dia, nós como professores para ensinar e como investigadores para as nossas tarefas, nós temos um bocado de déficit de atenção, não é? Porque, por exemplo, temos muitos alunos e não conseguimos falar com eles todos, ou não conseguimos ver os trabalhos de todos letra a letra e damos uma vista, digamos assim, na diagonal, não é? Passamos pelo índice. Quando o índice já nos dá bem, pronto, já temos coisas para dizer, olha, vai alterar isto e isto nos dá bem. Já nem lemos a introdução.
+
+21:03 - Cristina Machado Guimarães#+#Vasco Amorim
+Exatamente. Ou outra coisa qualquer que haja à frente. Portanto, é logo na estrutura que a gente apanha logo os problemas.
+
+21:09 - Vasco Amorim
+Depois é que vai ler, sabe? Quando a estrutura já está bem, então a gente já vai ler mais profundamente. Todas as ferramentas que possam encurtar e acrescentem qualidade aos trabalhos, eu acho que são úteis, não é? E acho que aqui na ética existe uma dificuldade tradicional que foi falada nesta tortulinha, que é em geral a visão mais filosófica não quer arranjar uma regra esquadra para encaixar isto, em geral. Mas depois quando a gente vai a ver, e eu tenho imensa prática disto, assim, só da ética tive de 2016 Tive 26 meses ligado à parte da UTAD e já estou aí desde 2015 ou 2016 também no hospital. E assim, muitas vezes o que acontece é quase administrativo, quer dizer, a maior parte das coisas que nós temos é que falta a declaração de consentimento informado, ou falta a declaração do orientador, Acho que deviam ser logo geridas automaticamente.
+
+22:13 - Cristina Machado Guimarães#+#Vasco Amorim
+Sim.
+
+22:14 - Vasco Amorim
+E ainda não houve a capacidade informaticamente de dizer, aponha aqui a declaração do orator, aponha não sei o que, aponha não sei o que mais. E o que tipo de projeto é que é, não é? Porque às vezes nem se refere. E há ali um conjunto de coisas que nem se devia aceitar informaticamente, deviam ser logo à partida, muitas vezes o que a gente vai fazer é isso. Depois, há coisas muito são muito mais avançadas, que já são mais delicadas, e aí pronto nós precisamos ter algum cuidado. É menor, não é menor? É preciso pedir a idade, o mês e o dia do nascimento? Isso aí já é preciso ponderar, e como temos ali várias especialidades, ou por exemplo, de que maneira é que o estudo vai afetar a saúde do paciente, ou qual é o grau, não é? Portanto, em geral, que vêm dos estudos e ensaios clínicos já passaram por uma comissão nacional. Portanto, nós não temos tanto que interferir porque já passou por uma comissão nacional, porque há vários graus, não é? Então, precisamente no tratamento, por exemplo, para câncer há sempre contraindicações e a pessoa tem que aceitar participar num estudo em que há uma grande probabilidade de haver contraindicações. Portanto, a ética é mesmo bastante complexa, mas há algumas coisas. A gente chega sempre à conclusão pessoas super básicas, já deviam, não é? Metem numa ferramenta e analisar. Olhe, isto já não tem isto, isto e isto. Nem vale a pena ir à comissão. O que é que vai à comissão fazer? Aparece lá na listagem de 20 ou 30 processos que a gente tem por mês, ou 40, às vezes algumas coisas excedem, não é? Porque há uns picos, não é? Por causa das testes de mestrado, outramente e não sei o quê. Há uns picos. Mas em geral há 20 a 30 processos e depois a gente vai ver, rapaz, isto administrativamente se quer não cumpre. E acho que falta muito. Destas ferramentas, até antes desta ética, das dimensões éticas, mesmo que falham em coisas que não deviam falhar. Está lá na checklist de coisas que eles têm que cumprir e eles mandam e não cumprem. Outra coisa que é crítica nos hospitais é ter a pessoa de contacto, uma assinatura em que a pessoa de contacto no centro de saúde, ou num hospital, ou o que seja, faz a ligação, é o chamado L de ligação, quando não tem aquilo também não pode avançar, porque não podem vir de fora de uma instituição, entraram lá para dentro para fazer operações ou consultar bases de dados. Não é possível, tem que haver sempre uma ligação. Portanto, há aqui uma coisa mesmo assim básica do tipo, não tenho os parafusos todos, pronto, e depois é que se vai ver se estão bem apertados e tal, não sei o quê, várias coisas mais iluídas, o piso do pneu e não sei o quê.
+
+24:52 - Cristina Machado Guimarães#+#Vasco Amorim
+Ou seja, a primeira abordagem… desculpa, me interrompeu. Diz, diz, não, diz, diz.
+
+24:56 - Cristina Machado Guimarães
+A primeira abordagem que nós devíamos fazer era tipo uma espécie de checklist que cumpre os três preceitos básicos, ou ter as três dimensões básicas nisto, nisto, nisto. E depois evoluir para mais, por escolha ou por recomendação nossa, para mais coisas durante a execução do projeto ou quais os momentos é que seria interessante para quem está a fazer deliverables, conseguir fazer bons deliverables em termos de responsabilidade e conseguir analisar esses deliverables à luz de um instrumento como este? Isto é o que eu acho que é útil para os investigadores.
+
+25:31 - Vasco Amorim
+Temos ferramentas que são interativas. Se nós transformarmos isto em vez de um questionário, uma ferramenta interativa, em que a pessoa vai várias vezes, mas tem um retorno. Tem um retorno que o vai melhorar a qualidade do seu trabalho. Eu acho que isso aqui era, se calhar, o caminho. Porque até agora, são ferramentas que parece que não são úteis para os investigadores. A gente está a fazer, parece-me, dezenas de questionários na Universidade. E eu confesso que não… Eu, por exemplo, quando estava na comissão de ética havia inquéritos que demoravam mais de 30 minutos a fazer, alguns 45 minutos a fazer. Aparecia 5 guiões, então na área da Psicologia é vulgar aparecer 5 ferramentas com 5 questionários daqueles de autor que até tem que se pedir licença ao autor para aplicar e não sei quê e pronto. Pesados, super pesados. Olha, eu vou-vos dizer um, que era perceber se havia uma intenção suicida nos adolescentes. E eu garanto que quando estive a ler o questionário, que tinha 30 e tal perguntas, perguntava de 30 e tal maneiras diferentes se já tinha pensado em suicidar. Se, ocasionalmente, não sei o que mais, pensava que terminar a vida. Se tinha pensado algum método de não sei o quê.
+
+26:52 - Cristina Machado Guimarães#+#Vasco Amorim
+E eu ouvindo as perguntas, eu próprio já estava a ficar afetado. Já estavas a pensar a sair da mente mesmo. É sério, eu pensei assim, eu disse assim, espere, isto para um jovem, eu já subindo aqui uma idade madura, isto para um jovem pode ser perigoso.
+
+27:05 - Vasco Amorim
+Eu disse, não, vamos pedir um parceiro, um professor catedrático na área da psicologia, para ver se podemos aplicar isto a manobros. Porque eu acho que este cenário é perigoso, porque imagina que a pessoa tem uma certa, o miúdo tem uma certa Mas a pergunta é quem é que fez o procedimento.
+
+27:21 - Cristina Machado Guimarães#+#Vasco Amorim
+Aquilo acaba por perceber, parece que está a empurrar a pessoa para pensar no suicídio.
+
+27:26 - Vasco Amorim
+Se calhar nunca pensa, ou pensa ocasionalmente.
+
+27:29 - Cristina Machado Guimarães#+#Vasco Amorim
+Não pensaste uma, pensaste 30 vezes até que conseguiste pensar. Nós perdemos um porcento, eu era o Presidente da Comissão, podiam aparecer, se podia ser aplicada a menores. Porque eu achava que aquilo, até sem acompanhamento, não é?
+
+27:42 - Vasco Amorim
+Um jovem com alguma flexibilidade podia intensificar a ideia ou até Quer dizer, imagina depois de aplicar um daqueles questionários, um menino mesmo suicida. Qual era o nosso papel? Eu não assumia essa responsabilidade. Podiam aparecer e veio que sim, que era possível, mas também achavam que devia haver um psicólogo também a acompanhar os elementos, não é? Os alunos que tinham de ser... Era mesmo muito pesado o arraio do questionário, não é? As pessoas nunca pensam na morte, por exemplo, quanto mais em suicidar, não é? Enfim, isto só para mostrar que isto é mesmo difícil, quando se trabalha na ética é mesmo difícil, as comissões de ética sofrem bastante, ainda por cima é proibido ser remunerado, portanto há assim uns molequinhos que ainda se dedicam a fazer aquilo, pronto, quer sejam médicos, quer sejam enfermeiros, por aí fora, a pessoa não pode receber Tipicamente, uma reunião dura cerca de duas a três horas e já lendo algumas coisas antes. Portanto, é bastante trabalhoso e acho que não há ferramentas para nos ajudar. E devia haver, principalmente aquelas que são, por exemplo, não tem o carimbo, não tem assinatura, não tem o CV, coisas básicas, eram logo processuais.
+
+29:02 - Cristina Machado Guimarães#+#Vasco Amorim
+Não é tanto o nosso customar. O nosso já é mais avançado.
+
+29:06 - Vasco Amorim
+Mas, eu acho que havia bastante vantagem em que nós fizéssemos uma ferramenta que que as pessoas fossem lá de mais que uma vez. Portanto, havia uma vez e havia um relatório, havia um feedback.
+
+29:18 - Cristina Machado Guimarães#+#Vasco Amorim
+Sim.
+
+29:19 - Vasco Amorim
+Não era só os investigadores fazerem respostas e depois poderão nunca ver o resultado desse questionário ou não têm logo um feedback, mas havia alguma coisa que ajudasse a vencer as coisas difíceis.
+
+29:30 - Cristina Machado Guimarães#+#Vasco Amorim
+Isso já existe.
+
+29:31 - Vasco Amorim
+Pronto, certo. Mas, ok, mas o facto de, por exemplo, há coisas difíceis, por exemplo, nós estamos a tentar conceber uma coisa boa mas se calhar nunca pensámos que aquilo pode ser usado de uma forma muito perigosa para a humanidade, por exemplo. Isso aconteceu tantas vezes e vai continuar a acontecer e se calhar não conseguimos ver isso antes, não é?
+
+29:55 - Cristina Machado Guimarães#+#Vasco Amorim
+Esse é o princípio do RRI, é dissipar aquilo que pode ser mau. Pois, a primeira coisa é refletirem, não é? É os investigadores refletirem. Exatamente.
+
+30:05 - Cristina Machado Guimarães
+É utilizar o RRI em nossa própria... Em nosso próprio proveito. Siminha? Tu podes falar, Cristina.
+
+30:12 - Cristina Machado Guimarães#+#Vasco Amorim
+Não, aqui é pensar numa outra possibilidade para além daquela divisão das dimensões, como o Fernando estava a dizer.
+
+30:21 - Cristina Maria Barbosa
+Eu estava aqui a olhar para um dos Excel, é certo que não está em todas, mas nós temos ali uma coluna de critério onde vai a áreas como se a questão está mais voltada, por exemplo, para a gestão de risco, ou para uma utilização responsável, ou para o impacto, ou para as motivações. Eu não sei se, fazendo esta divisão por dimensão, não seria interessante ir mais a estes elementos que, por exemplo, podiam servir, lá está, para a consulta mais frequente, não é? Ou ao react com suporte à investigação. Não é? E em vez de estarem só centradas, por exemplo, nas dimensões, estariam, por exemplo, por estes critérios. E aí, por exemplo, dentro do Risk Management ou do Compliance, se entrava quase a fase zero, não é? Grounded do início. Ou até numa fase mais a seguir, em que eu quero confirmar antes de enviar a proposta ou antes de integrar outras pessoas na e que possa avaliar, por exemplo, novamente os riscos. E se calhar colocava numa lógica de critérios para me apoiar a gerir, digamos assim, a minha inovação por estas dimensões, mas olha, nas fases dos critérios.
+
+31:53 - Cristina Machado Guimarães
+Esses critérios podem cruzar com com secções específicas da escrita de propostas, por exemplo.
+
+32:00 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Temos a secção de impacto, temos a secção de risco e temos a secção de excelência, por exemplo.
+
+32:06 - Cristina Maria Barbosa
+O Vasco estava aqui a falar dos critérios éticos e estava a olhar um bocadinho aqui para isso mesmo, ou seja, há diferentes elementos da proposta neste momento obrigatórios e isto pensando só, por exemplo, nas propostas europeias, mas se calhar olharmos para isto numa lógica de projetos também das empresas, pelo menos, por exemplo, esta questão da gestão de riscos, tem diferentes fases, em diferentes fases de implementação dos projetos, não é? E era quase que colocar isto como, acho que também é interessante ter a ferramenta como um aconselhamento ou como uma, um suporte ao processo e não como uma validação única, não é? A ideia da inteligência artificial que estavam a dar eu acho muito interessante também. Agora eu fico a pensar como é que se treina estes modelos para diferentes cenários, não é? Seja para a investigação, seja para projetos mais centrados em, sei lá, inovação aplicada, empresarial, que têm algumas diferenças. Como é que se treina os LLMs para ter estes exemplos? Ou então, por exemplo, centrar-se só em características texto, não é? E aí se calhar, não sei se é mais centrado na parte da linguagem propriamente dita, não é? Mas isso se calhar são outras questões. Depois, só vos queria... Eu sei que não tem nada a ver, mas eu encontrei, provavelmente, eu não sei se a nível científico isto... Mas é só porque visualmente acho que tem algum impacto, por exemplo, produzirmos à semelhança do que estavam a dizer, o tempo esperado da produção do inquérito também é quase um design que nos vai ajudar a pensar, ok, como é que é estas dimensões todas. Eu não sei se este grupo de trabalho conhecem, eu encontrei este assessment, pronto, que está mais ligado a este termo da regenerative innovation. Aparentemente isto tem alguma parte científica, pronto, eu não sei a nível de classificação científica se é de facto um estudo, pronto, que tenha a avaliação de pares assim mais efetuada, mas que também ele é um assessment, pronto, com várias dimensões, como o nosso. Mas o que é que me chama a atenção neste é que há uma parte visual, não é, sobre o inquérito, pronto, que de alguma forma também este opta por ter algumas questões iniciais só já colocadas, mais simplificadas, mas há uma parte visual. E outro que também acho que, do ponto de vista de mostrar as dimensões, que também pode ser engraçado, de tentarmos olhar também nesta perspectiva do utilizador, que o Fernando estava a trazer inicialmente, aquela framework dos Inner Development Goals, que está ligada mais àquela componente da parte, desculpem que eu estou a tentar encontrar o recurso, tem duas versões. Eu acho que é aqui.
+
+35:15 - Unidentified Speaker
+Já vos coloco.
+
+35:18 - Cristina Maria Barbosa
+Agora está a falhar.
+
+35:21 - Unidentified Speaker
+Não sei porquê.
+
+35:23 - Cristina Maria Barbosa
+Mas eu acho que é aqui. Deixe-me ver se ela aparece. Essa é a minha internet que está aqui e não me deixa mostrar. Eu acho que podia ajudar aqui alguma coisa também visual na ferramenta. Este grupo segundo O outro, é só uma ideia, não sei se visualmente, se até temos isto na ficamente, eu acho que não, não é?
+
+36:19 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Só no colador final é que temos uma visão.
+
+36:22 - Cristina Machado Guimarães
+Temos isto de outra maneira, não de uma forma agregada, numa página só, mas ela vai aparecendo dessa maneira. Podemos partilhar, abrir um e vermos também, não fazia mal nenhum, estamos a olhar para a nossa ferramenta mesmo.
+
+36:35 - Cristina Maria Barbosa#+#Vasco Amorim
+Mas este que enviou é engraçado. Pronto.
+
+36:37 - Cristina Maria Barbosa
+E este segundo, é só também do do ponto de vista... Esta abordagem deste grupo de trabalho também é um bocadinho diferente, mas é... Eles transformam isto e eu só vim buscar este recurso porque o Vasco estava a falar aí dos exemplos da psicologia. Este grupo do Inner Development Goals quer cultivar que tipo de valores ou que tipo de princípios é que nós podemos ter na nossa transformação individual, não é? Para que de alguma forma tenhamos aqui mais capacidade, competências, recursos próprios para contribuir para os ODS, para os Objetivos de Desenvolvimento Sustentável. Eles basicamente, também visualmente, eles incorporam isto em cinco áreas principais, não é? E depois colocam as tais competências ou as características. O que é que eu acho interessante é que eles têm duas versões também para a pessoa, portanto se vocês descerem aí, Como é que eles… isto lá está, também são 25 dimensões, ainda são mais dimensões do que aquelas que nós temos. Mas eles apresentam isto quase, olha, se tu quiseres ver a versão sumária e é quase aqui uns flashcards de… estas dimensões traduzem-se neste tipo de valores ou de características ou desenvolvedos e tem um sumário.
+
+37:57 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Pode ser uma arrumação possível, é uma arrumação interessante.
+
+38:00 - Cristina Maria Barbosa
+E depois tem um report mais estruturado, onde falam com mais detalhe. Sobre como é que individualmente as pessoas poderão desenvolver estas características, estes valores, estas competências em diferentes universos, portanto. E tem o tal, se vocês descerem essa página, tem ali onde eles explicam 25 competências, não é? Destas cinco dimensões, não é? E tem a parte sumária e aquilo é como se fosse quase cartas, não é? Cartas de jogo, em que explica, nas cinco dimensões, são estas competências que estamos aqui a falar e depois no reporte completo já há uma descrição mais, portanto, desenvolvida de elementos a desenvolver, seja do ponto de vista individual, seja até do ponto de vista, portanto, em evidência com outras pessoas, na organização, mas tem uma descrição mais ativa destas características. É certo que isto é para competências, não é?
+
+39:07 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Sim, sim, é um bocado nessa lógica. É capacidade de building, ela pode passar ao que vem, exatamente. Agora, eu não sei se esta lógica do capacidade de building faz sentido para o REACT na mesma, não é?
+
+39:21 - Cristina Maria Barbosa
+Porque na prática nós estamos a fazer um assessment às características de inovação responsável, mas que de alguma depois a lógica é também, como acho eu, o que você estava a referir, o investigador também, ao ter mais consciência sobre algumas fragilidades da sua inovação, vai ficar treinado ou vai ter aqui um elemento de apoio a esse treino de competências, ou pelo menos para ter mais consciência que a sua inovação está a ser focada mais, sei lá, na ética e menos na parte da inovação entre pares ou até das características tecnológicas de impacto da inovação, ou seja, vai-lhe dar uma visão diferente, uma consciência diferente também do seu próprio trabalho, não é? E do impacto do seu trabalho. Portanto, eu não sei se esta visão quase de competências também faz sentido como elemento de aprendizagem contínua, não é?
+
+40:20 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Faz em dois sentidos. Para ganho deles e para ganho nosso.
+
+40:24 - Cristina Machado Guimarães
+Porquê? Se nós conseguimos fazer a correspondência entre cada conjunto de questões, dentro de cada dimensão, para necessidades que eles tenham de skills ou de consultoria ou do que for, temos do outro lado uma necessidade de resposta, que eles vão also fruir, de um conjunto de pessoas que lhes pode transmitir uma data de preceitos éticos ou de coisas que têm que cumprir, ou até consultoria específica na área da sustentabilidade ou isto ou daquilo, ou seja, há uma correspondência de colmatar aquilo que o projeto não tem com aquilo que nós vamos dar, digamos assim, de serviços para esses gaps. Podemos fazer esse… Aliás, isso estava pensado no início e não se pensou mais, ou melhor. Dentro daquela Excel, à frente, deveria mostrar como é que a gente responde a isso, como caso os níveis estejam fraquinhos, caso a resposta seja fraquinha. Como é que podemos ajudar estas equipas a melhorar o nível de resposta? Mas isso, visualizamos o ganho deles, não tanto, mas visualizamos principalmente o nosso ganho. A minha questão continua a ser o que é que eles ganham.
+
+41:40 - Cristina Machado Guimarães
+Onde é que está o valor para eles?
+
+41:45 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Tornando isto mais intuitivo, tornando isto mais interativo, onde é que eles ganham?
+
+41:52 - Cristina Machado Guimarães
+Nós temos que responder isso para entender o reato.
+
+41:57 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+É em competências para conseguirem ter projetos de inovação mais responsáveis, não é?
+
+42:04 - Cristina Maria Barbosa
+Ganham em competências ao perceber que nas de um projeto ao assumir, ou mesmo por exemplo na experiência do Souteki, não é? O empreendedor que estava a fazer esta reflexão tem um momento de reflexão da sua atividade, toma consciência de alguns elementos a comentar, portanto tem esta visão quase estratégica de como é que tem conduzido o projeto até agora, reconhece fragilidades e consegue criar aspectos de melhoria, não é? Ou pelo menos tem a sensibilidade ganha-se nível de evidência, não é? Em última análise, também, no processo do próprio inquérito, vai ter esta consciência de... Vai ter alguma capacitação para reconhecer estes padrões, não é? Se calhar no próximo projeto que vá fazer...
+
+42:52 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Se tiver tempo para isso, se nem apetecer. Pois, é verdade.
+
+42:57 - Cristina Machado Guimarães
+Onde é que eu quero chegar? Eu lembro que na altura o Fernando partilhou comigo um projeto que nós desbaseamos também para perceber como é que ele funcionava, que era o COMPASSE. Lembras-te, Fernanda, o COMPASSE foi um projeto europeu que, todo ele, estruturou o REACT, digamos assim. E depois não se sabe o dia 2 desse projeto, ou seja, foi ele que foi criado e hoje não é utilizado. Basicamente, não vejo ninguém a dizer, eu pelo COMPASSE sou X desponsável.
+
+43:27 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+O COMPASSE não é aquela framework das características do... Ou é outro?
+
+43:31 - Cristina Maria Barbosa
+Não é das da investigação, do perfil do investigador, não?
+
+43:36 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Ou é outra coisa? Não, não é essa.
+
+43:39 - Unidentified Speaker
+Onde é que ele anda?
+
+43:41 - Cristina Machado Guimarães
+Isto, eu tenho isso. O link está na Excel, eu acho. Tenho quase certeza que tenho o link na Excel.
+
+43:51 - Cristina Machado Guimarães#+#Vasco Amorim
+Mas eu vou procurar aqui.
+
+43:54 - Unidentified Speaker
+Ela já tinha 11 anos.
+
+43:58 - Cristina Machado Guimarães
+Eu tenho que procurar, agora não vai aparecer, é sempre assim quando a gente quer, mas eu pôs em views. Mas... Não, não é isso.
+
+44:23 - Cristina Maria Barbosa
+Eu estava a apanhar isto, mas não é isto.
+
+44:39 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+É isto.
+
+44:42 - Unidentified Speaker
+Ok.
+
+44:44 - Cristina Machado Guimarães
+É isto.
+
+44:48 - Unidentified Speaker
+Não saiu.
+
+44:52 - Cristina Machado Guimarães
+Não valeu-me Deus.
+
+44:57 - Unidentified Speaker
+Deve ter caído. Sim.
+
+45:05 - Cristina Machado Guimarães
+Este foi o projeto. Algumas coisas até fui ver aqui, o que fizeram, como é que fizeram. Eles criaram a metodologia toda, criaram uma self-check tool, depois tem os training materials, essa coisa toda. A self-check tool, o COMPASSE, nasceu como exercício académico, porque neste momento não há ninguém que use, que eu saiba. Do que nós estamos a ver e andamos a tentar ver o dia 2 disto, não há propriamente… o que eu quero dizer com isto é, ou há um selo de responsabilidade que a União Europeia pede para cada projeto ter e então correm uma ferramenta e coloquem um selo respondente numa ferramenta certificada, ou então isto não usado. E eu dá-me a ideia que isto se calhar não foi mais usado porque não tem esse selo de garantia ou selo de… para utilização em projetos. E nós não até tínhamos falado nisso, se era possível fazermos isso aqui ou se não é. Ou seja, isso também não depende de nós, depende da vontade da União Europeia adotar uma ferramenta de responsabilidade dentro da submissão de uma proposta ou até da execução de um projeto. O que aí torna a coisa pertinente de usar. Infelizmente as pessoas não usam as coisas para o bem, porque sim usam quando são obrigadas usar, para as habitudes até é fixe e usam.
+
+46:32 - Cristina Machado Guimarães#+#Vasco Amorim
+É como a sustentabilidade, nós não viramos todos green porque sim, é porque a diretiva, porque as leis pedem que a gente faça. É horrível dizer isto, mas é verdade, porque primeiro o motor para se implementar em qualquer coisa é um bocado de direto globalizar.
+
+46:51 - Vasco Amorim
+Pela via da educação, da sensibilização pela educação, não é? E também pela publicidade. Mas, em alguns casos, existem incentivos, não é? E, por exemplo, eu tenho aqui em casa para aí cinco locais de recolha seletiva de lixo, não é? É os óleos, é os plásticos, é o papel, é o vidro, é o café e as pilhas. Ou seja, já passei o número que eu disse.
+
+47:18 - Cristina Machado Guimarães#+#Vasco Amorim
+Um, dois, três, quatro, cinco, seis. Acho que são para aí seis. Não há qualquer incentivo, não é?
+
+47:25 - Vasco Amorim
+o lixo geral, e vejo lá pessoal a pôr papelão, plástico, equipamentos, tudo, põe lá tudo, não há qualquer incentivo, quer dizer, eu é que sou o Tulinho que tenho que sair de casa cinco vezes, de casa, para ir a cinco sítios diferentes pôr o lixo.
+
+47:41 - Cristina Machado Guimarães#+#Vasco Amorim
+E acumulou-se tudo quando o encontras? Não é sempre, não é sempre. O oleão, pronto, é mais de seis meses, mas pronto, não há qualquer incentivo. Mas está-nos imbebido porque nós temos essa consciência e temos responsabilidade incutida em nós, porque estamos todos a lidar com esses problemas da sociedade. E agora há uma coisa que é vamos lixar o lixo, ou vamos não sei o que é o lixo, não é?
+
+48:05 - Vasco Amorim
+Porque nós não estamos a selecionar bem o lixo.
+
+48:08 - Cristina Maria Barbosa#+#Vasco Amorim
+E depois quem tem salvação são os aterros, pois os aterros custam muito dinheiro.
+
+48:13 - Cristina Machado Guimarães#+#Cristina Maria Barbosa#+#Vasco Amorim
+Os atrasados ambientais, lá da publicidade. Ah, é verdade!
+
+48:16 - Cristina Maria Barbosa#+#Vasco Amorim
+A atrasada ambiental, é isso.
+
+48:18 - Vasco Amorim
+Tem muita piada essa publicidade. Portanto, enfim, se encontrarmos ferramentas que incentivem as pessoas a usar e a terem um melhor produto, não é? Mas é verdade o que a Cristina estava a dizer, há imensos projetos que criaram ferramentas para serem aplicadas, mas ficam lá abandonadas. Alguns porque não conhecem, outros porque não querem fazer aprendizagem, não é? Outra coisa terrível é que cada vez as pessoas querem menos aprender, gastar tempo a aprender.
+
+48:55 - Cristina Machado Guimarães#+#Vasco Amorim
+Querem uma coisa super rápido.
+
+48:56 - Vasco Amorim
+Tudo que demore, por exemplo, mais de 5 minutos, 10 minutos, que a gente veja que vai demorar muito a aprender, desiste logo. Seja software, seja o que for. E cada vez mais esta coisa da inteligência artificial parece-se reduzir esses tempos, não é? E as pessoas vão adotando por facilitismo, não é? Não é por facilidade, é por facilitismo e depois tem sérias surpresas, não é? Por exemplo, uma das que eu vi agora, e que acontece muito, foi um discurso da reitora da Universidade de Ghent, na Bélgica, fez um discurso em que meteu uma citação, acho que foi do Einstein, não foi de uma pessoa qualquer, acho que foi do Einstein, obrigado. E eu acho que ele nunca tinha dito aquilo. Ele depois confessou que foi a Inteligência Social que lhe fez o discurso. E era para receber um título qualquer, de honoris, qualquer coisa. Em outro sítio qualquer, portanto foi uma vergonha.
+
+49:46 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Um exemplo, muito engraçado, o que aconteceu com a IA, mas está relacionado com isso, que é, eu estava a escrever um artigo e precisava de afirmações de referências numa área muito específica.
+
+49:58 - Fernando Luis Ferreira de Almeida
+Eu tinha procurado por várias estratégias e estava com muitas dificuldades. E então perguntei à IA, mas fez uma pergunta muito direta. Que tipo de documento, que anos e tudo. E ela deu-me uma resposta espetacular.
+
+50:10 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Eu gostei imenso.
+
+50:11 - Fernando Luis Ferreira de Almeida
+resposta, que eu não existia. Portanto, eu disse que é aquilo que eu não existia. E eu depois questionei-a, no caso só de GPT, como é que ela me deu aquela resposta que eu não existia. E sabem o que ela me respondeu? É que eram apenas eventos que podiam existir.
+
+50:23 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Pois. Ah, não posso acreditar. Não, se não os perguntar, sei lá, mas parece... Eu sou capaz de matar, ok? Ele é sincero, já não é que não fazemos as contas certas.
+
+50:31 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+É, eu fechei o meu site, só que eu vi que aquele número era meu.
+
+50:34 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Porque ele está desenhado para agradar. Exatamente. Queres ouvir isto?
+
+50:37 - Cristina Machado Guimarães#+#Vasco Amorim
+Ele está desenhado para agradar o cliente. Agradar a pessoa e faz tudo para nos agradar. Mas referência de erradas não, pelo amor da santa. Pois, mas tem que se lhe dizer, mas não me dês as citações erradas. Ou mostra-me onde é que foste buscar esta citação.
+
+50:53 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+A gente tem que fazer estas coisas.
+
+50:56 - Fernando Luis Ferreira de Almeida
+É, mas eu disse, ele apenas me disse que aquilo eram exemplos que poderiam existir.
+
+51:01 - Vasco Amorim
+Pois, mas tem que ser verdadeiro. Mas dá-me citações verdadeiras que tenham de facto existido e diz-me onde é que encontraste.
+
+51:09 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Há alturas que não dá para desistir, não vale a pena entrar muito com ele.
+
+51:15 - Cristina Machado Guimarães
+Ele acaba aqui a tentar arranjar, não sei se há saída dessa maneira, para arranjar pertinência num instrumento destes para o futuro e para ser usado realmente. A comunidade da RRI, que existe uma comunidade, existe uma conferência, existe uma ou mais, não é? Tem algum Eu não sei se tenho ou se não tenho, acho que era tentar explorar também isso. Tenho alguma influência junto da Comissão Europeia ou junto de algumas, até universidades, que façam com que as coisas sejam realmente implementadas, nem que sejam em projetos piloto ou aquilo ou aquilo outro, para que haja tração de utilização. E eu não sei se é um caminho a explorar. Se percebemos que dentro de uma comunidade de prática, se já existe tração de que forma é que ela é criada e se nós podemos utilizar o mesmo género de caminho.
+
+52:08 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+Oh Cristina, ainda bem que tu tocas nesse assunto, posso-te mencionar que isso é exatamente aquilo que eu apresentei na última reunião, do terceiro projeto.
+
+52:15 - Fernando Luis Ferreira de Almeida
+É exatamente o que percebi para a Arnelso Grupo.
+
+52:18 - Cristina Machado Guimarães#+#Vasco Amorim
+Eu até fotografei o teu slide.
+
+52:20 - Cristina Machado Guimarães
+Para mim é um slide.
+
+52:22 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Oh, é isto que eu quero falar. Agora, eu acho que se não estiver em nível de governance, obrigatoriedade, é muito complicado, não é?
+
+52:29 - Fernando Luis Ferreira de Almeida
+Aliás, o Inastec tem um problema que seria salientado pela última avaliação e pelas últimas avaliações estéticas que nós tivemos, que é que os gestos europeus terminam e, muito interessante, e depois, qual é a sequência? A maioria deles perdem-se completamente. Não é só a Unesco que perdem-se, todos.
+
+52:44 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Em todos os lados. É isso mesmo, é isso mesmo. Essa crítica eu já postei lá em chapa 4.
+
+52:50 - Vasco Amorim
+Já é chapa 4, já põe logo, já vem logo escrito no relatório. Só se não for é que tiram.
+
+52:57 - Cristina Maria Barbosa
+Mas eu não sei se aqui o INE Eu acho que o Brussels tem alguns instrumentos para nos ajudarem a avaliar isto, como estão lá mais próximos do centro da decisão.
+
+53:10 - Cristina Maria Barbosa#+#Fernando Luis Ferreira de Almeida
+Por exemplo, alguns... Isso é uma questão de lobby, claramente.
+
+53:14 - Cristina Maria Barbosa
+Não sei, não é só de lobby, ou seja, mas perceber aqui, não é?
+
+53:21 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+As estratégias aqui dos projetos.
+
+53:23 - Cristina Maria Barbosa
+O que é que...
+
+53:27 - Cristina Maria Barbosa
+Qual era o processo de comercialização para isto, se nós fizéssemos isto por esta influência nos projetos piloto, ou não sei, ou se é possível fazer isto, não é? Sim, vamos ser pragmáticos.
+
+53:40 - Fernando Luis Ferreira de Almeida
+Eu acho que realmente é interessante ter isso e eu acho que em termos das equipas pensarem sobre o assunto é importante. Eu acho que pode ajudar até no processo de aprovação, porque cada vez mais há questões éticas e por portanto, não chega só a responder que sim, é importante também demonstrar como é que realmente é aplicado. Eu acho que isso pode ter mais valia atender nos atuais critérios de avaliação. Agora, poderia ser mais, sem dúvida, não é? O que temos é algo muito tênue, esse nível, não é? Sobretudo em termos de avaliação, porque, infelizmente, a ética, eu vejo pela investigação, nós temos TRBs e aquilo é chapacinho. Em muitos casos, não digo em todos, não poderia ser justo, mas em muitas comissões Eu basta dizer o que é que quero e eles metem a comissão, porque sou amigo, entre aspas, não é? Portanto, aquilo é atribuído por uma questão de proximidade das pessoas e não propriamente por um rigor de análise.
+
+54:36 - Cristina Machado Guimarães#+#Fernando Luis Ferreira de Almeida
+É muito escasso, não estou a dizer em todos, isso seria injusto, mas na investigação acontece muito, não é?
+
+54:42 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Em todo lado, infelizmente.
+
+54:44 - Unidentified Speaker
+Infelizmente.
+
+54:44 - Vasco Amorim
+Olhem, já agora uma perguntinha.
+
+54:46 - Cristina Machado Guimarães#+#Vasco Amorim
+Por acaso todos têm acesso ao chat GPT do Inés Nós aqui que estamos aqui. Tenho. Tenho.
+
+54:52 - Cristina Machado Guimarães#+#Cristina Maria Barbosa
+Queres a password do site?
+
+54:55 - Cristina Machado Guimarães#+#Cristina Maria Barbosa#+#Vasco Amorim
+Não estou com acesso.
+
+54:57 - Cristina Machado Guimarães#+#Vasco Amorim
+Olha-me a Deus! Vocês têm que ir à password do site.
+
+55:02 - Cristina Machado Guimarães#+#Cristina Maria Barbosa#+#Vasco Amorim
+Peçam à Marta.
+
+55:03 - Vasco Amorim
+Eu tenho a password do site. Eu estou a dizer isto porque existe a possibilidade de criar um projeto e depois partilhá-lo com uma equipa.
+
+55:17 - Vasco Amorim
+Então, como estava a pensar fazer umas experiências, podia juntar a esse grupo, criar esse grupo. Portanto, se vocês virem um convite, não se espantem, deve ser eu que estou a fazer um convite de... A minha ideia, que eu falei à Cristina, que é atrasada, quando vi esta coisa da Turtularia e do Responsive AI, era ver se era possível incluir o REACT num framework de Responsive AI. Portanto, ligá-lo à inteligência artificial. E parece permissor, no sentido de que, pronto, acho que é uma coisa inovadora. Podemos fazer uma coisa, porque mais ninguém de fora nos vai dar deliverables do projeto.
+
+56:05 - Cristina Machado Guimarães
+Podemos fazer um piloto com deliverables do Inesco, em projetos de Inesco? Se é que houve uns teores também para ir virados e colocar lá para nós que começamos a pensar em cima desses documentos.
+
+56:20 - Vasco Amorim
+Pois. O que eu acho é que o que está a acontecer é que devido à complexidade de todos estes tópicos e de ser multidisciplinar é capaz de não haver ninguém que esteja a cobrir todas as áreas, não é? Nós, por exemplo, estamos muito bem nesta parte, destas dimensões, já foi muito E o que eu vi na última tertúlia é que estava muito informático, hardware, software dependente. E, portanto, e se calhasse nós como somos um centro de investigação brutal, somos dos maiores que há para aí, nós tínhamos que usar isso a nosso favor.
+
+56:59 - Cristina Machado Guimarães#+#Vasco Amorim
+Temos, não é?
+
+57:00 - Vasco Amorim
+Os centros são centros, mas quando usamos os Tech4, não é? Por exemplo, imagina Tech4 Ethics. Que estão a ver, criar aqui um Tech4Ethics, que a gente consiga contribuir das várias maneiras. E eu acho que isso era... Porque o Tech4 é a lógica dos sectoriais e, pronto, eles praticaram...
+
+57:21 - Cristina Machado Guimarães#+#Vasco Amorim
+Eu sei, pronto, vai ser uma coisa melhor ainda. Era a ideia de ser uma coisa que houvesse uma ferramenta que resulte do conhecimento... Eu vou sair da porta já, desculpem. É um minutinho.
+
+57:35 - Vasco Amorim
+quase a terminar. É um minutinho. Certo. Pronto, acho que pode-se fazer umas experiências, não é? E ver para onde é que isto vai. E, de qualquer forma, o Fernando também tem que nos dar aqui um feedback do que é que precisava também de nós para este trabalho, não é? Que é multi-anual, que é para 2028, não é? Salvo erro.
+
+57:58 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+É daqui a três anos.
+
+57:59 - Fernando Luis Ferreira de Almeida
+Sim, tenho que pensar no tema, mas lógico que a ideia seria o último tópico, que é como é que nós podemos ter estratégia de mitigação para a dificuldade da atuação da Responsability Innovation, porque existem várias, não é?
+
+58:14 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Aliás, o que nós temos aqui é muito lixo, não é?
+
+58:18 - Vasco Amorim
+Pois, pois.
+
+58:18 - Fernando Luis Ferreira de Almeida
+Em termos de aplicação, e sentando isso na análise, eu acho que é importante nós considerarmos dois aspectos. Um, o que é que nós podemos realizar no curto prazo, porque eu tenho uma publicação para a International Journal of que é uma de copos, que é uma, e se nós não tivermos mais inquéritos, esqueçam a publicação.
+
+58:38 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Isso vai para o lixo.
+
+58:40 - Fernando Luis Ferreira de Almeida
+Não temos publicação nenhuma porque não temos dados. Estão sempre contra isso. Isso é muito pragmático. Se nós tivermos mais dados, quando digo mais dados, é pelo menos 200 respostas. Menos 200 respostas, esquece.
+
+58:50 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+É lixo.
+
+58:51 - Vasco Amorim
+Ó Fernando, vou-te contar agora uma, depois vou repetir, se calhar para a Cristina, que ela ainda não viu, mas eu estive numa conferência, acho que foi o ano passado, Eu já nem sei se foi ano passado, já foi em setembro ou outubro do outro ano. Foi em 2024 ou 2025. Tinha que ver os meus apontamentos. Em que eu vi uma apresentação lá que tinha 5 mil e tal inquéritos. Estás mesmo a ver qual foi a pergunta que eu fiz? Olha, desculpa, como é que conseguiu ter 5 mil e tal respostas?
+
+59:25 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Porque eu sei o quanto custa. Estava aqui, quanto é que custa, receber a resposta.
+
+59:31 - Vasco Amorim
+Sabes o que é que o rapaz disse? O rapaz não, era um senhor já feito. Era inglês. Nós, no projeto, temos fundos para comprar, para pagar, para as pessoas responderem. Portanto, eles usavam uma parte do dinheiro, uma parte do dinheiro, para… pá, não sei se com a ajuda de uma está ligada a esta coisa dos... Como é que se chama? Dos gastos estacionários?
+
+59:59 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Posso dizer, realmente estás a dizer exatamente o que se passou. Posso contar-me um projeto.
+
+1:00:04 - Fernando Luis Ferreira de Almeida
+Eu tenho um projeto financiado pela Fundação La Caixa, de particular.
+
+1:00:07 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+Ok? O que é que se passa?
+
+1:00:10 - Fernando Luis Ferreira de Almeida
+Tem um orçamento, o orçamento é baixo, mas 90% do orçamento se opõe a uma empresa de sondagens. Empresa de sondagens da SIC. Ok? Que é uma multinacional alemã. E que tem uma resposta de 5 mil. 5 mil respostas em inquéritos telefónicos. Ok? Bem, que é mais complicado, atenção, em quilosónicos, ok? Pagamos um valor alto, não interessa quanto, ok?
+
+1:00:29 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+E, portanto, é isso mesmo.
+
+1:00:31 - Fernando Luis Ferreira de Almeida
+Portanto, pragmático.
+
+1:00:31 - Fernando Luis Ferreira de Almeida#+#Vasco Amorim
+É uma empresa privada, muito grande, a maior empresa de saudades da Alemanha, que é a mesma que faz parte da GSK.
+
+1:00:39 - Vasco Amorim
+A minha pergunta é, se nós queremos ir por aí, se existe possibilidade de recolher os fundos necessários para ter, por exemplo, 5 mil respostas, se isso não resolve o problema que tu estás a identificar?
+
+1:00:52 - Fernando Luis Ferreira de Almeida
+Nessa aplicação não, porque não é só uma questão de ter painel par. Nós não temos muitas dificuldades. Nós não tivemos alguma melhoria em termos de design, na minha opinião. Nós conseguimos internamento na Escotec. As pessoas respondam.
+
+1:01:07 - Unidentified Speaker
+Nós temos mais vivendos corretos. Muito mais. Está sem internamento. Não precisamos de abrir nada. Só precisamos de internamento.

@@ -1,0 +1,74 @@
+Reestruturação RIAT
+Thu, Feb 5, 2026
+
+Summary:
+
+A reunião focou na reestruturação do sistema RIAT, abordando as dificuldades na utilização do REACT. Fernando destacou que, apesar de a aplicação ser bem construída, o excesso de dimensões apresenta desafios para os usuários. Ele sugeriu uma alteração no design para permitir a seleção de dimensões específicas, o que facilitaria o preenchimento do inquérito. Cristina e Gabriel também contribuíram, enfatizando a necessidade de um design mais intuitivo e a possibilidade de sugerir dimensões com base em categorias.
+
+Vasco Amorim apresentou uma proposta para integrar Inteligência Artificial na análise de documentos, compartilhando uma experiência positiva em que a IA ajudou a resumir relatórios. No entanto, Fernando expressou preocupações sobre o uso inadequado da IA por alguns alunos, que podem tratar a tecnologia como uma solução que dispensa o esforço pessoal. A discussão ressaltou a importância de uma abordagem crítica e consciente na utilização da IA, especialmente em contextos de avaliação e ética.
+
+A conversa também abordou a necessidade de ferramentas que ajudem na estruturação ética de propostas de pesquisa, com Cristina sugerindo a criação de uma checklist para facilitar a análise. Vasco levantou preocupações sobre questionários psicológicos, sugerindo a inclusão de supervisão e acompanhamento psicológico para garantir a segurança dos participantes. Além disso, foram discutidas estratégias para melhorar a gestão de riscos e a importância de um feedback contínuo para os investigadores, destacando a relevância de tornar as ferramentas mais intuitivas e acessíveis.
+
+
+Chapters & Topics:
+
+Discussão sobre o REACT e suas Dificuldades
+Durante a discussão, Fernando mencionou que a aplicação do REACT possui 16 dimensões, o que pode tornar o preenchimento do inquérito muito longo e complicado, especialmente para usuários menos especializados. Ele propôs a implementação de um design mais intuitivo, permitindo que os usuários escolham apenas algumas dimensões e tenham uma estimativa do tempo necessário para completar o inquérito.
+* Dificuldades na utilização da aplicação REACT e sugestões de melhorias.
+* Importância da intuitividade na escolha das dimensões na aplicação.
+* Necessidade de um design mais simples e acessível para aumentar a adesão dos usuários.
+
+Propostas de Uso da Inteligência Artificial na Avaliação
+Vasco Amorim propõe o uso de Inteligência Artificial para analisar relatórios e identificar dimensões relevantes, facilitando o trabalho dos investigadores. Fernando Almeida apoia a ideia, mas critica a forma como alguns alunos veem a IA como uma solução mágica, sem compreender o processo envolvido. Ambos discutem a importância de um uso crítico e consciente da tecnologia.
+* Necessidade de dados para publicações acadêmicas e a importância de inquéritos.
+* Discussão sobre a implementação de Inteligência Artificial para auxiliar na análise de documentos.
+* Criação de um grupo para desenvolver um projeto de inteligência artificial.
+
+Discussão sobre Ferramentas de Apoio à Ética em Projetos
+Vasco Amorim menciona a dificuldade de os pesquisadores abordarem questões éticas adequadamente, muitas vezes enviando trabalhos sem a supervisão dos orientadores. Ele sugere a criação de uma ferramenta interativa que auxilie na construção de projetos, enquanto Cristina Machado Guimarães destaca a importância de uma checklist que aborde as dimensões éticas essenciais.
+
+Discussão sobre Questionários de Avaliação Psicológica
+Vasco Amorim discutiu a complexidade e os riscos associados à aplicação de questionários psicológicos, especialmente os que investigam a intenção suicida em jovens. Ele mencionou que as perguntas podem levar os adolescentes a refletirem sobre o suicídio de maneira negativa. Para mitigar esses riscos, sugeriu a necessidade de um acompanhamento psicológico durante a aplicação dos questionários.
+
+Discussão sobre Ferramentas e Critérios para Gestão de Projetos
+Vasco Amorim mencionou a falta de ferramentas que ajudem os investigadores a obter feedback sobre suas respostas a questionários, sugerindo que isso poderia melhorar o processo. Cristina Machado Guimarães e Cristina Maria Barbosa propuseram a criação de critérios que cruzem diferentes dimensões, como gestão de risco e impacto, para apoiar a elaboração de propostas e a inovação.
+
+Discussão sobre Competências e Inovação Responsável
+Durante a conversa, Cristina Maria Barbosa menciona que o grupo Inner Development Goals apresenta 25 dimensões de competências que podem ser desenvolvidas para promover a inovação responsável. Cristina Machado Guimarães destaca a necessidade de entender o valor que essas competências trazem para os participantes, questionando como podem ser utilizadas para melhorar a resposta das equipes e colmatar lacunas existentes.
+
+Discussão sobre Sustentabilidade e Gestão de Resíduos
+Cristina e Vasco abordam a relação entre sustentabilidade e legislação, enfatizando que a conscientização e a educação são fundamentais para promover mudanças. Vasco compartilha sua experiência com a coleta seletiva em casa, apontando a ausência de incentivos que facilitem a separação do lixo, o que gera frustração.
+
+Desafios da Aprendizagem e Inteligência Artificial
+Vasco Amorim e Fernando Almeida abordam a tendência das pessoas em buscar soluções rápidas, muitas vezes em detrimento da aprendizagem profunda. Fernando compartilha uma experiência em que a inteligência artificial forneceu informações que não existiam, levantando preocupações sobre a precisão das respostas geradas por essas ferramentas.
+
+Discussão sobre Implementação e Avaliação de Projetos
+Cristina Machado Guimarães sugeriu a exploração de estratégias para garantir a pertinência de instrumentos futuros, enquanto Fernando Luis Ferreira de Almeida enfatizou a fragilidade da avaliação ética em projetos. Vasco Amorim propôs a criação de um grupo para desenvolver um projeto que integre inteligência artificial, visando inovações na área.
+* Discussão sobre a tração e pertinência de instrumentos para o futuro.
+* Influência da Comissão Europeia e universidades na implementação de projetos.
+* Reflexão sobre a responsabilidade ética na pesquisa e na utilização de ferramentas de avaliação.
+* Estratégias de mitigação para a atuação da Responsability Innovation.
+
+
+Action Items:
+
+* Fernando Luis Ferreira de Almeida irá testar a aplicação REACT e reportar bugs encontrados.
+* Fernando Luis Ferreira de Almeida irá sugerir melhorias de design para a aplicação REACT, focando na intuitividade da escolha das dimensões.
+* Cristina Machado Guimarães irá verificar se a barra de progresso já está implementada na aplicação REACT.
+* Vasco Amorim irá explorar a possibilidade de utilizar Inteligência Artificial para analisar documentos e auxiliar na avaliação das dimensões.
+* Vasco Amorim irá criar um grupo para desenvolver um projeto relacionado à inteligência artificial e convidar os participantes para se juntarem.
+* Fernando Luis Ferreira de Almeida irá pensar sobre o tema da estratégia de mitigação para a atuação da Responsability Innovation.
+* Fernando Luis Ferreira de Almeida precisa de mais dados para a publicação na International Journal of, com um mínimo de 200 respostas.
+
+
+Key Questions:
+
+* Quais são as principais dificuldades enfrentadas pelos usuários ao utilizar a aplicação REACT?
+* Como a aplicação REACT pode ser melhorada para aumentar a adesão dos usuários?
+* Como é que a Comissão Europeia pode influenciar a implementação de projetos piloto?
+* Qual é a forma de garantir a tração na utilização de instrumentos para o futuro?
+
+
+Notepad:
+
+* No notes

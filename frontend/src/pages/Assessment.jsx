@@ -4,6 +4,7 @@ import AssessmentThree from "../components/AssessmentThree";
 import AssessmentFour from "../components/AssessmentFour";
 import AssessmentFive from "../components/AssessmentFive";
 import AssessmentNavigation from "../components/AssessmentNavigation";
+import SelectDimensions from "../components/SelectDimensions";
 import { useProject } from "../contexts/ProjectContext";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -31,6 +32,8 @@ const Assessment = () => {
     // STEP 5
     const [allDimensions, setAllDimensions] = useState([]);
     const [topLevelDimensions, setTopLevelDimensions] = useState([]);
+    const [filteredTopLevelDimensions, setFilteredTopLevelDimensions] = useState([]);
+    const [selectedDimensionIds, setSelectedDimensionIds] = useState([]);
     const [dimensionsNumber, setDimensionsNumber] = useState(0);
     const [currentDimension, setCurrentDimension] = useState(0);
     const [dimensionStage, setDimensionStage] = useState(1);
@@ -56,6 +59,13 @@ const Assessment = () => {
                     const response = await api.get(`/api/submission/${id}/`);
 
                     setSurveyId(response.data.surveys_id_surveys);
+                    
+                    // Try to load saved dimension selection from localStorage
+                    const savedSelection = localStorage.getItem(`dimension_selection_${id}`);
+                    if (savedSelection) {
+                        setSelectedDimensionIds(JSON.parse(savedSelection));
+                    }
+                    
                     setStep(5);
 
                 } catch (error) {
@@ -261,8 +271,8 @@ const Assessment = () => {
         if (projectPhase === 1) {
             setLoading(false);
             setSuccess('Phase selected successfully');
-            setStep(5);
-            navigate('/projects/');
+            // Don't navigate yet - go to dimension selection first
+            setStep(4.5);
             return;
         } else {
 
@@ -272,8 +282,8 @@ const Assessment = () => {
                 });
 
                 setSuccess('Phase selected successfully');
-                setStep(5);
-                navigate('/projects/');
+                // Don't navigate yet - go to dimension selection first
+                setStep(4.5);
 
             } catch (error) {
                 alert(error);
@@ -283,6 +293,24 @@ const Assessment = () => {
                 setLoading(false);
             }
         }
+    };
+
+    /* STEP 4.5 - SELECT DIMENSIONS */
+
+    const handleDimensionSelectionSubmit = () => {
+        if (selectedDimensionIds.length === 0) {
+            setError("Please select at least one dimension to continue.");
+            return;
+        }
+        
+        // Save dimension selection to localStorage
+        if (id) {
+            localStorage.setItem(`dimension_selection_${id}`, JSON.stringify(selectedDimensionIds));
+        }
+        
+        setError('');
+        setStep(5);
+        navigate('/projects/');
     };
 
 
@@ -370,11 +398,26 @@ const Assessment = () => {
                 allDimensions.flatMap(d => d.sub_dimensions || [])
             );
 
-            setTopLevelDimensions(allDimensions.filter(d => !subdimensionIds.has(d.id_dimensions)));
+            const topLevel = allDimensions.filter(d => !subdimensionIds.has(d.id_dimensions));
+            setTopLevelDimensions(topLevel);
+            
+            // Initialize selectedDimensionIds with all dimensions if not set
+            if (selectedDimensionIds.length === 0 && step < 4.5) {
+                setSelectedDimensionIds(topLevel.map(d => d.id_dimensions));
+            }
 
-            setDimensionsNumber(allDimensions.filter(d => !subdimensionIds.has(d.id_dimensions)).length);
+            setDimensionsNumber(topLevel.length);
         }
     }, [allDimensions]);
+
+    // STEP 5 - FILTER TOP LEVEL DIMENSIONS BASED ON USER SELECTION
+    useEffect(() => {
+        if (topLevelDimensions.length > 0 && selectedDimensionIds.length > 0) {
+            const filtered = topLevelDimensions.filter(d => selectedDimensionIds.includes(d.id_dimensions));
+            setFilteredTopLevelDimensions(filtered);
+            setDimensionsNumber(filtered.length);
+        }
+    }, [topLevelDimensions, selectedDimensionIds]);
 
     // STEP 5 - RENDER ASSESSMENT IF READY
     useEffect(() => {
@@ -657,10 +700,18 @@ const Assessment = () => {
             {step === 4 && (
                 <AssessmentFour handlePhaseUpdate={handlePhaseUpdate} />
             )}
-            {isAssessmentReady && (
+            {step === 4.5 && topLevelDimensions.length > 0 && (
+                <SelectDimensions 
+                    topLevelDimensions={topLevelDimensions} 
+                    selectedDimensionIds={selectedDimensionIds}
+                    setSelectedDimensionIds={setSelectedDimensionIds}
+                    handleDimensionSelectionSubmit={handleDimensionSelectionSubmit}
+                />
+            )}
+            {isAssessmentReady && step === 5 && (
                 <>
-                    <AssessmentFive loading={loading} projectPhase={projectPhase} allDimensions={allDimensions} topLevelDimensions={topLevelDimensions} dimensionsNumber={dimensionsNumber} currentDimension={currentDimension} handleDimensionChange={handleDimensionChange} dimensionStage={dimensionStage} setDimensionStage={setDimensionStage} selectedValues={selectedValues} setSelectedValues={setSelectedValues} handleStatementAnswerSubmit={handleStatementAnswerSubmit} existingAnswers={existingAnswers} firstRender={firstRender} handleAssessmentSubmit={handleAssessmentSubmit} statementCounter={statementCounter} submittingAssessment={submittingAssessment} setSubmittingAssessment={setSubmittingAssessment} naSelected={naSelected} setNaSelected={setNaSelected} submitMessage={submitMessage} />
-                    <AssessmentNavigation topLevelDimensions={topLevelDimensions} existingAnswers={existingAnswers} currentIndex={currentDimension} setCurrentDimension={setCurrentDimension} />
+                    <AssessmentFive loading={loading} projectPhase={projectPhase} allDimensions={allDimensions} topLevelDimensions={filteredTopLevelDimensions} dimensionsNumber={dimensionsNumber} currentDimension={currentDimension} handleDimensionChange={handleDimensionChange} dimensionStage={dimensionStage} setDimensionStage={setDimensionStage} selectedValues={selectedValues} setSelectedValues={setSelectedValues} handleStatementAnswerSubmit={handleStatementAnswerSubmit} existingAnswers={existingAnswers} firstRender={firstRender} handleAssessmentSubmit={handleAssessmentSubmit} statementCounter={statementCounter} submittingAssessment={submittingAssessment} setSubmittingAssessment={setSubmittingAssessment} naSelected={naSelected} setNaSelected={setNaSelected} submitMessage={submitMessage} />
+                    <AssessmentNavigation topLevelDimensions={filteredTopLevelDimensions} existingAnswers={existingAnswers} currentIndex={currentDimension} setCurrentDimension={setCurrentDimension} />
                 </>
             )}
 

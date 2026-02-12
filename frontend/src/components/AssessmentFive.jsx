@@ -9,9 +9,11 @@ const AssessmentFive = ({ loading, projectPhase, allDimensions, topLevelDimensio
     const [example, setExample] = useState('');
     const [showAlert, setShowAlert] = useState(false);
 
-    const subDimensionsInfo = allDimensions.filter(dimension =>
-        allDimensions[currentDimension].sub_dimensions.some(subId => subId === dimension.id_dimensions)
-    );
+    // Use topLevelDimensions to get subdimensions, not allDimensions
+    const currentTopLevelDimension = topLevelDimensions[currentDimension];
+    const subDimensionsInfo = currentTopLevelDimension ? allDimensions.filter(dimension =>
+        currentTopLevelDimension.sub_dimensions?.some(subId => subId === dimension.id_dimensions)
+    ) : [];
 
     const sanitizeSimple = (html) => {
         const allowedTags = ['strong', 'em'];
