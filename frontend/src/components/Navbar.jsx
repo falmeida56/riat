@@ -13,7 +13,7 @@ const Navbar = () => {
 <nav className="navbar sticky-top border-bottom border-secondary-subtle" style={{ zIndex: 5, height: "10vh", backgroundColor: "white" }}>
     <a href="/" className="text-dark text-decoration-none ms-4 d-flex flex-column align-items-center">
         <img
-            src="/logo_horizontal.svg"
+            src="/FireRes_logo_800x201.png"
             alt="RIAT Logo"
             style={{ height: "3.5rem" }}
         />
