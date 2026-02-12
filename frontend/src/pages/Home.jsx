@@ -28,8 +28,8 @@ const Home = () => {
             </div>
             <div className='w-100 text-center'>
                 <img
-                    src="/FireRes_logo_800x201.png"
-                    alt="FireRes Logo"
+                    src="/banner.png"
+                    alt="FireRes Banner"
                     className='w-100'
                 />
             </div>
