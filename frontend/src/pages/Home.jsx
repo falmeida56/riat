@@ -28,7 +28,7 @@ const Home = () => {
             </div>
             <div className='w-100 text-center'>
                 <img
-                    src="/landing_page_img.png"
+                    src="/banner.png"
                     alt="Innovation Assessment"
                     className='w-100'
                 />
