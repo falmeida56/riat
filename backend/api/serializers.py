@@ -120,6 +120,7 @@ class UserHasProjectsSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(validators=[])
+    project_value_chain = serializers.CharField(required=False, allow_blank=True, default='N/A')
     # Add user_email to metadata by using a SerializerMethodField
     metadata = serializers.SerializerMethodField()
     metadata_data = UserHasProjectsSerializer(many=True, source='usershasprojects_set')
@@ -182,7 +183,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'project_organization': validated_data.get('project_organization'),
             'project_owner_name': validated_data.get('project_owner_name'),
             'project_phase': validated_data.get('project_phase'),
-            'project_value_chain': validated_data.get('project_value_chain'),
+            'project_value_chain': validated_data.get('project_value_chain', 'N/A'),
             'project_trl': validated_data.get('project_trl'),
             'project_mrl': validated_data.get('project_mrl'),
             'project_srl': validated_data.get('project_srl'),

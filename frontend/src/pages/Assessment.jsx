@@ -193,13 +193,6 @@ const Assessment = () => {
             return;
         }
 
-        //value chain
-        if (projectValueChain === '') {
-            setError("Value Chain must be selected");
-            setLoading(false);
-            return;
-        }
-
         //function in the organization
         if (userFunction.trim().length < 2) {
             setError("Please introduce a valid answer for the Function in the organization field");
