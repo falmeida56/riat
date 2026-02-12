@@ -108,7 +108,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydb',
+        'NAME': 'db_riat',
         'USER': 'riat_admin',
         'PASSWORD': 'F]v8x9*04_gS',
     #   'NAME': 'db_riat',
