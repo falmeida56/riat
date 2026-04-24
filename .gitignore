@@ -173,5 +173,9 @@ cython_debug/
 .pypirc
 
 # Local-only RIAT meeting notes
-20260205_Reestruturação RIAT Summary.txt
-20260205_Reestruturação RIAT Transcript.txt
+/misc/
+
+# Media files
+.mp3
+.mp4
+.m4a
