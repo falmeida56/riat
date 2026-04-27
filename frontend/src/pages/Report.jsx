@@ -1,10 +1,11 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import api from '../api';
 import Chart from "react-apexcharts";
 import DownloadPDFButton from "../components/PdfReport";
 import ReportAnswers from "../components/ReportAnswers";
+import ReportCopilotPanel from "../components/ReportCopilotPanel";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const Report = () => {
@@ -14,6 +15,7 @@ const Report = () => {
 
     // general report data
     const [reportData, setReportData] = useState(null);
+    const [reportError, setReportError] = useState("");
     const [creationTime, setCreationTime] = useState("");
     const [projectName, setProjectName] = useState("");
     const [projectOrganization, setProjectOrganization] = useState("");
@@ -47,16 +49,22 @@ const Report = () => {
 
     useEffect(() => {
         const getReport = async () => {
-            const response = await api.get(`api/report/detail/${token}/`);
-            setReportData(response.data);
-            setReportCode(token)
+            setReportCode(token);
+            setReportError("");
+            try {
+                const response = await api.get(`/api/report/detail/${token}/`);
+                setReportData(response.data);
+            } catch (error) {
+                const message = error.response?.data?.error || "Could not load this report.";
+                setReportError(message);
+            }
         }
         getReport();
     }, [token]);
 
     // GENERAL REPORT DATA
     useEffect(() => {
-        if (reportData) {
+        if (reportData?.details?.project) {
             const creationTime = reportData.report_creation_date;
             const formattedCreationTime = new Date(creationTime).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -79,11 +87,9 @@ const Report = () => {
         }
     }, [reportData]);
 
-    console.log(reportData);
-
     //CHART DATA
     const getChartCategories = () => {
-        if (reportData) {
+        if (reportData?.details?.dimension_scores) {
             const categories = reportData.details.dimension_scores.map(item => item.dimension_name);
             setChartCategories(categories);
             return categories;
@@ -91,7 +97,7 @@ const Report = () => {
     }
 
     const getChartData = () => {
-        if (reportData) {
+        if (reportData?.details?.dimensions && reportData?.details?.dimension_scores) {
 
             // Sum all scale_labels (not 'n/a') for each dimension
             const scaleLabelCounts = reportData.details.dimensions.map(dimension => {
@@ -116,9 +122,11 @@ const Report = () => {
     }
 
     useEffect(() => {
-        getChartCategories();
-        getChartData();
-        setLoadedChartData(true);
+        if (reportData?.details) {
+            getChartCategories();
+            getChartData();
+            setLoadedChartData(true);
+        }
     }, [reportData]);
 
     const [options, setOptions] = useState({
@@ -200,7 +208,7 @@ const Report = () => {
     // SCORE AND RECOMMENDATIONS
 
     useEffect(() => {
-        if (reportData) {
+        if (reportData?.overall_score?.overall_recommendation) {
             const score = reportData.overall_score.reports_overall_score_value;
             const maxScore = reportData.overall_score.reports_overall_score_max_value;
             setScore(score);
@@ -242,8 +250,18 @@ const Report = () => {
     }, [reportData]);
 
     return (
-        <div className="global-container" style={user.user_role === 1 ? { marginLeft: '16rem', maxWidth: 'calc(100% - 16rem)', overflowX: 'auto' } : null}>
+        <div className="global-container" style={user?.user_role === 1 ? { marginLeft: '16rem', maxWidth: 'calc(100% - 16rem)', overflowX: 'auto' } : null}>
             <div className="create-project-container">
+                {reportError && (
+                    <div className="alert alert-danger" role="alert">
+                        {reportError}
+                    </div>
+                )}
+                {!reportError && !reportData?.details && (
+                    <div className="alert alert-info" role="status">
+                        Loading report...
+                    </div>
+                )}
                 <p className="mb-0">
                     <HelpOutlineIcon /> This code allows you to access this report at any time via 'Reports' section. Be sure to save it in a safe place.
                 </p>
@@ -295,6 +313,7 @@ const Report = () => {
 
                     <h4 className="mt-3  mb-4">General Recommendations</h4>
                     <p className="fs-5">{recommendation}</p>
+                    <ReportCopilotPanel token={token} />
                     <ReportAnswers
                         dimensionsData={dimensionsData}
                         showAnswers={showAnswers}

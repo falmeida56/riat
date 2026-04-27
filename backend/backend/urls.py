@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import AddUserToProjectView, RegisterView, LoginView, GetSurveyView, GetSurveyDetailView, CreateSurveyView, UpdateSurveyView, GetScaleView, CreateScaleView, GetStatementView, CreateStatementView, CreateProjectView, UpdateProjectPhaseView, GetDimensionView, CreateDimensionView, UpdateDimensionView, UpdateStatementView, AdminAllProjectsView, UserOwnProjectsView, SubmissionViewSet, AnswerViewSet, ReportViewSet, PasswordResetRequestView, PasswordResetView, GetSingleScaleView, UpdateScaleView, PendingRequestsView, AcceptOrRefusePendingRequestView, DeleteDimensionView, DeleteStatementView, UpdateOverallRecommendationsView, GetOverallRecommendationsView
+from api.views import AddUserToProjectView, RegisterView, LoginView, GetSurveyView, GetSurveyDetailView, CreateSurveyView, UpdateSurveyView, GetScaleView, CreateScaleView, GetStatementView, CreateStatementView, CreateProjectView, UpdateProjectPhaseView, GetDimensionView, CreateDimensionView, UpdateDimensionView, UpdateStatementView, AdminAllProjectsView, UserOwnProjectsView, SubmissionViewSet, AnswerViewSet, ReportViewSet, ReportCopilotView, PasswordResetRequestView, PasswordResetView, GetSingleScaleView, UpdateScaleView, PendingRequestsView, AcceptOrRefusePendingRequestView, DeleteDimensionView, DeleteStatementView, UpdateOverallRecommendationsView, GetOverallRecommendationsView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView  
 
 urlpatterns = [
@@ -77,6 +77,7 @@ urlpatterns = [
         'patch': 'partial_update',
         'delete': 'destroy'
     }), name='report-detail'),
+    path('api/report/copilot/<str:report_token>/', ReportCopilotView.as_view(), name='report-copilot'),
     #RECOMMENDATIONS
     path('api/recommendation/get/', GetOverallRecommendationsView.as_view(), name='get-recommendations'),
     path('api/recommendation/update/<int:id_overall_recommendations>/', UpdateOverallRecommendationsView.as_view(), name='update-recommendation'),

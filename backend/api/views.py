@@ -16,8 +16,407 @@ from rest_framework import status
 from .permissions import IsAdminUser
 from rest_framework.generics import RetrieveAPIView
 from collections import defaultdict
+import json
+import os
+import re
+import urllib.error
+import urllib.request
 
 User = get_user_model()
+
+
+def _classify_scale_answer(scale_label):
+    if not scale_label:
+        return "unknown"
+
+    normalized = str(scale_label).strip().lower()
+    low_labels = {
+        "strongly disagree", "disagree", "somewhat disagree",
+        "never", "rarely", "ocasionally", "occasionally",
+    }
+    high_labels = {
+        "somewhat agree", "agree", "strongly agree",
+        "sometimes", "often", "very often", "always",
+    }
+
+    if normalized in low_labels:
+        return "low"
+    if normalized in high_labels:
+        return "high"
+    return "medium"
+
+
+def _summarize_dimension_status(percentage):
+    if percentage is None:
+        return "unknown"
+    if percentage < 55:
+        return "fragile"
+    if percentage < 75:
+        return "developing"
+    return "solid"
+
+
+def _is_written_example_statement(statement):
+    statement_name = (statement.get("name") or "").lower()
+    scale_levels = statement.get("scale_levels")
+    return "provide examples" in statement_name or not scale_levels
+
+
+def _collect_written_evidence(statement):
+    snippets = []
+    ignored_values = {"examples", "example", "n/a", "na", "-"}
+    for answer in statement.get("answers", []):
+        answer_text = answer.get("value")
+        if answer_text in (None, ""):
+            continue
+        if isinstance(answer_text, str):
+            cleaned = answer_text.strip()
+            if cleaned and cleaned.lower() not in ignored_values:
+                snippets.append(cleaned[:300])
+    return snippets
+
+
+def _score_dimension_items(report, report_details):
+    dimension_lookup = {
+        dimension.get("id"): dimension
+        for dimension in report_details.get("dimensions", [])
+    }
+
+    items = []
+    for score in report_details.get("dimension_scores", []):
+        dimension_id = score.get("dimensions_id_dimensions_id")
+        dimension = dimension_lookup.get(dimension_id, {})
+        statements = dimension.get("statements", [])
+        max_points = 0
+        representative_answers = []
+        written_examples = []
+        positive_claims = []
+        weak_signals = []
+
+        for statement in statements:
+            try:
+                scale_levels = int(statement.get("scale_levels") or 0)
+            except (TypeError, ValueError):
+                scale_levels = 0
+            if scale_levels:
+                max_points += scale_levels
+
+            if _is_written_example_statement(statement):
+                for snippet in _collect_written_evidence(statement):
+                    if len(written_examples) < 3:
+                        written_examples.append({
+                            "statement": statement.get("name"),
+                            "evidence": snippet,
+                        })
+                continue
+
+            for answer in statement.get("answers", []):
+                scale_label = answer.get("scale_label")
+                value = scale_label or answer.get("value")
+                if value in (None, ""):
+                    continue
+
+                answer_entry = {
+                    "statement": statement.get("name"),
+                    "answer": value,
+                    "strength": _classify_scale_answer(scale_label),
+                }
+
+                if len(representative_answers) < 6:
+                    representative_answers.append(answer_entry)
+
+                if answer_entry["strength"] == "high" and len(positive_claims) < 3:
+                    positive_claims.append(answer_entry)
+                if answer_entry["strength"] == "low" and len(weak_signals) < 3:
+                    weak_signals.append(answer_entry)
+
+        try:
+            raw_score = int(score.get("reports_score_dimension_score") or 0)
+        except (TypeError, ValueError):
+            raw_score = 0
+        percentage = round((raw_score / max_points) * 100) if max_points else None
+        status = _summarize_dimension_status(percentage)
+        contradiction_note = None
+        if status in {"fragile", "developing"} and positive_claims and not written_examples:
+            contradiction_note = (
+                "The scored answers suggest this area is still weak or only partly embedded, "
+                "but there are positive claims without written evidence examples."
+            )
+
+        items.append({
+            "dimension_id": dimension_id,
+            "dimension_name": score.get("dimension_name"),
+            "short_description": dimension.get("short_description"),
+            "score": raw_score,
+            "max_score": max_points,
+            "percentage": percentage,
+            "status": status,
+            "representative_answers": representative_answers,
+            "written_examples": written_examples,
+            "positive_claims": positive_claims,
+            "weak_signals": weak_signals,
+            "contradiction_note": contradiction_note,
+        })
+
+    return items
+
+
+def _build_ai_context(report, report_details, document_excerpt=""):
+    overall_score = report.reports_overall_score_id_reports_overall_score
+    recommendation = overall_score.overall_recommendations_id_overall_recommendations
+    project = report_details.get("project", {})
+    dimension_items = _score_dimension_items(report, report_details)
+    ai_patterns = [
+        r"\bai\b", r"\bartificial intelligence\b", r"\bmachine learning\b",
+        r"\banalytics\b", r"\bcomputer vision\b", r"\bautonomous\b",
+        r"\balgorithm", r"\bdata-driven\b", r"\bblockchain",
+        r"\bdigital platform\b",
+    ]
+    project_text = " ".join([
+        str(project.get("name", "")),
+        str(project.get("acronym", "")),
+        str(document_excerpt or ""),
+    ]).lower()
+
+    return {
+        "project": project,
+        "overall_score": {
+            "value": overall_score.reports_overall_score_value,
+            "max_value": overall_score.reports_overall_score_max_value,
+            "level": recommendation.overall_recommendation_name,
+            "static_recommendation": recommendation.overall_recommendations_description,
+        },
+        "dimension_scores": dimension_items,
+        "written_evidence_summary": [
+            {
+                "dimension_name": item["dimension_name"],
+                "written_examples": item["written_examples"],
+            }
+            for item in dimension_items
+            if item.get("written_examples")
+        ],
+        "document_excerpt": document_excerpt[:6000],
+        "appears_ai_or_data_intensive": any(re.search(pattern, project_text) for pattern in ai_patterns),
+    }
+
+
+def _build_dimension_action(item):
+    dimension_name = (item.get("dimension_name") or "").lower()
+    templates = {
+        "anticipation": (
+            "Create an anticipation improvement note.",
+            "List the main technological, environmental, economic, and social impacts, then add a simple risk and mitigation review date.",
+        ),
+        "reflection/reflexivity": (
+            "Add a reflexivity checkpoint to project governance.",
+            "Schedule a short review moment where the team questions assumptions, interests, trade-offs, and whether the project is still solving the right problem.",
+        ),
+        "transparency": (
+            "Strengthen transparency and communication evidence.",
+            "Define what will be shared, with whom, and at which project moments, then keep a light record of dissemination and stakeholder visibility actions.",
+        ),
+        "governance": (
+            "Tighten governance documentation for this area.",
+            "Assign ownership, decision rules, and a place where new perspectives, risks, and follow-up actions are tracked.",
+        ),
+        "legal": (
+            "Review legal and compliance readiness.",
+            "Map the most relevant regulatory obligations, identify who checks them, and document how compliance is verified during the project.",
+        ),
+        "ethical": (
+            "Convert ethical considerations into explicit operating practices.",
+            "Document how ethical issues are surfaced, reviewed, and escalated, and keep examples of decisions or safeguards already applied.",
+        ),
+        "inclusion": (
+            "Broaden inclusion and stakeholder evidence.",
+            "Identify missing stakeholder groups, define how feedback will be gathered, and capture examples showing how that feedback changes project decisions.",
+        ),
+        "responsiveness": (
+            "Improve the project’s responsiveness routine.",
+            "Document how the team reacts to constraints, risks, or external changes, and show which decisions can be adapted quickly without losing project pace.",
+        ),
+    }
+
+    action, detail = templates.get(
+        dimension_name,
+        (
+            f"Create a short improvement note for {item.get('dimension_name')}.",
+            "Define the gap, the owner, the next concrete action, and when it will be reviewed.",
+        ),
+    )
+
+    return {"action": action, "detail": detail}
+
+
+def _build_dimension_evidence(item):
+    dimension_name = (item.get("dimension_name") or "").lower()
+    evidence_templates = {
+        "anticipation": "Impact/risk registers, scenario notes, and mitigation decisions tied to likely project consequences.",
+        "reflection/reflexivity": "Team review notes showing assumptions, trade-offs, or motivations that were questioned and updated.",
+        "transparency": "Communication records, dissemination materials, or stakeholder updates showing what was shared and when.",
+        "governance": "Decision logs, governance meeting notes, and records of tracked perspectives or actions.",
+        "legal": "Compliance checklists, regulatory reviews, GDPR or domain-specific legal validation records.",
+        "ethical": "Ethics review notes, codes of conduct, conflict-of-interest records, or oversight body interactions.",
+        "inclusion": "Stakeholder mapping, end-user feedback, or meeting records showing who was involved and what changed because of that input.",
+        "responsiveness": "Risk response actions, contingency decisions, or evidence that the team adapted quickly to constraints or new information.",
+    }
+    return evidence_templates.get(
+        dimension_name,
+        f"Concrete records showing how {item.get('dimension_name')} was handled in project decisions and follow-up actions.",
+    )
+
+
+def _format_answer_examples(answer_entries):
+    return [
+        f"{entry['statement']} -> {entry['answer']}"
+        for entry in answer_entries[:2]
+    ]
+
+
+def _fallback_copilot_plan(context):
+    dimensions = [
+        item for item in context["dimension_scores"]
+        if item.get("percentage") is not None
+    ]
+    priority_dimensions = sorted(dimensions, key=lambda item: item["percentage"])[:3]
+    project = context["project"]
+
+    priority_gaps = []
+    recommended_actions = []
+    evidence_to_collect = []
+
+    for item in priority_dimensions:
+        why_it_matters = (
+            f"This dimension is currently {item['status']} with a relative score of {item['percentage']}%, "
+            "so it needs more explicit project practice and evidence."
+        )
+
+        if item.get("written_examples"):
+            first_example = item["written_examples"][0]["evidence"]
+            why_it_matters += f" The assessment already contains some written evidence, for example: \"{first_example}\"."
+        else:
+            why_it_matters += " The assessment does not yet contain written examples that show how this is handled in practice."
+
+        if item.get("contradiction_note"):
+            why_it_matters += f" {item['contradiction_note']}"
+
+        if item.get("weak_signals"):
+            example_signals = "; ".join(_format_answer_examples(item["weak_signals"]))
+            why_it_matters += f" Weak signals in the answers include: {example_signals}."
+
+        priority_gaps.append({
+            "dimension": item["dimension_name"],
+            "why_it_matters": why_it_matters,
+        })
+
+        action = _build_dimension_action(item)
+        if item.get("written_examples"):
+            action["detail"] += " Build on the written examples already provided and turn them into explicit repeatable practice."
+        else:
+            action["detail"] += " Add at least one concrete evidence example so the next assessment is less abstract."
+        recommended_actions.append(action)
+        evidence_to_collect.append(_build_dimension_evidence(item))
+
+    evidence_to_collect.append("A short follow-up plan with owners, dates, and success indicators for the selected improvement actions.")
+
+    responsible_ai_notes = []
+    if context["appears_ai_or_data_intensive"]:
+        responsible_ai_notes = [
+            "Clarify where AI, analytics, automated decision-making, or data-driven components are used.",
+            "Document data sources, data quality checks, human oversight, and monitoring responsibilities.",
+            "Check whether transparency, bias, explainability, safety, or accountability risks need a dedicated mitigation plan.",
+        ]
+
+    return {
+        "generated_by": "riat_fallback",
+        "priority_gaps": priority_gaps,
+        "recommended_actions": recommended_actions,
+        "evidence_to_collect": evidence_to_collect,
+        "proposal_or_impact_language": (
+            f"{project.get('name', 'The project')} can strengthen its responsible innovation "
+            "positioning by converting the weaker RIAT dimensions into named actions, owned follow-up tasks, "
+            "and concrete evidence. This makes the project easier to monitor internally and easier to describe "
+            "credibly in impact, governance, or reporting language."
+        ),
+        "responsible_ai_notes": responsible_ai_notes,
+        "review_caveats": [
+            "This is a deterministic RIAT draft because an external LLM response was not available.",
+            "Use it as a starting point and validate the recommendations with the RIAT team.",
+        ],
+    }
+
+
+def _call_external_llm(context):
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        return None
+
+    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    api_url = os.getenv("OPENAI_API_URL", "https://api.openai.com/v1/chat/completions")
+    system_prompt = (
+        "You are RIAT Copilot, an assistant for responsible innovation assessment. "
+        "Return concise, practical, action-oriented, evidence-oriented recommendations. "
+        "Use the RIAT assessment as the primary source, including scaled answers and written example fields. "
+        "Treat pasted project text only as optional enrichment. "
+        "Prioritize concrete next steps, ownership-ready guidance, evidence to collect, and brief governance/process improvements. "
+        "When useful, point out gaps between positive claims and weak scores or missing written evidence. "
+        "Do not invent facts. Return only valid JSON matching the requested schema."
+    )
+    user_prompt = {
+        "task": "Generate an AI-assisted RIAT improvement plan.",
+        "schema": {
+            "generated_by": "external_llm",
+            "priority_gaps": [{"dimension": "", "why_it_matters": ""}],
+            "recommended_actions": [{"action": "", "detail": ""}],
+            "evidence_to_collect": [""],
+            "proposal_or_impact_language": "",
+            "responsible_ai_notes": [""],
+            "review_caveats": [""],
+        },
+        "riat_context": context,
+    }
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": json.dumps(user_prompt, ensure_ascii=False)},
+        ],
+        "temperature": 0.2,
+        "response_format": {"type": "json_object"},
+    }
+
+    request = urllib.request.Request(
+        api_url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=45) as response:
+            response_data = json.loads(response.read().decode("utf-8"))
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        fallback = _fallback_copilot_plan(context)
+        fallback["review_caveats"].insert(
+            0,
+            f"External LLM call failed, so RIAT returned a deterministic draft instead: {exc}",
+        )
+        return fallback
+
+    try:
+        content = response_data["choices"][0]["message"]["content"]
+        return json.loads(content)
+    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
+        fallback = _fallback_copilot_plan(context)
+        fallback["review_caveats"].insert(
+            0,
+            f"External LLM response could not be parsed, so RIAT returned a deterministic draft instead: {exc}",
+        )
+        return fallback
 
 # USERS_AUTH
 class RegisterView(generics.CreateAPIView):
@@ -804,6 +1203,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Reports.objects.all()
     serializer_class = ReportSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         submissions_id_submissions = request.data.get('submissions_id_submissions')
@@ -838,6 +1238,47 @@ class ReportViewSet(viewsets.ModelViewSet):
             return Response(data, status=status.HTTP_200_OK)
         except Reports.DoesNotExist:
             return Response({"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ReportCopilotView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, report_token):
+        document_excerpt = request.data.get("document_excerpt", "")
+        if document_excerpt is None:
+            document_excerpt = ""
+        if not isinstance(document_excerpt, str):
+            return Response(
+                {"error": "Document excerpt must be text."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if document_excerpt and len(document_excerpt) > 12000:
+            return Response(
+                {"error": "Document excerpt is too long for this prototype. Please keep it under 12,000 characters."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            report = Reports.objects.get(report_token=report_token)
+        except Reports.DoesNotExist:
+            return Response({"error": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ReportSerializer(report)
+        report_details = serializer.get_report_details(report)
+        context = _build_ai_context(report, report_details, document_excerpt=document_excerpt)
+        plan = _call_external_llm(context) or _fallback_copilot_plan(context)
+
+        return Response(
+            {
+                "plan": plan,
+                "source_context": {
+                    "project": context["project"],
+                    "overall_score": context["overall_score"],
+                    "appears_ai_or_data_intensive": context["appears_ai_or_data_intensive"],
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 # RECOMMENDATIONS
