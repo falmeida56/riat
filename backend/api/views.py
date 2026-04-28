@@ -346,6 +346,68 @@ def _fallback_copilot_plan(context):
     }
 
 
+def _first_text_value(item, keys):
+    if isinstance(item, dict):
+        for key in keys:
+            value = item.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+    if isinstance(item, str) and item.strip():
+        return item.strip()
+    return ""
+
+
+def _normalize_external_copilot_plan(plan):
+    if not isinstance(plan, dict):
+        return None
+
+    normalized = {
+        "generated_by": "external_llm",
+        "priority_gaps": [],
+        "recommended_actions": [],
+        "evidence_to_collect": [],
+        "proposal_or_impact_language": _first_text_value(
+            plan.get("proposal_or_impact_language"),
+            [],
+        ) or _first_text_value(plan, ["proposal_or_impact_language", "impact_language", "reporting_language"]),
+        "responsible_ai_notes": [],
+        "review_caveats": [],
+    }
+
+    for item in plan.get("priority_gaps") or []:
+        if not item:
+            continue
+        dimension = _first_text_value(item, ["dimension", "name", "title"]) or "Priority gap"
+        why_it_matters = _first_text_value(
+            item,
+            ["why_it_matters", "rationale", "reason", "detail", "description"],
+        )
+        if why_it_matters:
+            normalized["priority_gaps"].append({
+                "dimension": dimension,
+                "why_it_matters": why_it_matters,
+            })
+
+    for item in plan.get("recommended_actions") or []:
+        if not item:
+            continue
+        action = _first_text_value(item, ["action", "title", "recommendation", "dimension"]) or "Recommended action"
+        detail = _first_text_value(item, ["detail", "why_it_matters", "rationale", "description", "next_step"])
+        if detail:
+            normalized["recommended_actions"].append({
+                "action": action,
+                "detail": detail,
+            })
+
+    for key in ["evidence_to_collect", "responsible_ai_notes", "review_caveats"]:
+        for item in plan.get(key) or []:
+            text = _first_text_value(item, ["evidence", "item", "note", "caveat", "detail", "description"])
+            if text:
+                normalized[key].append(text)
+
+    return normalized
+
+
 def _call_external_llm(context):
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
@@ -409,8 +471,12 @@ def _call_external_llm(context):
 
     try:
         content = response_data["choices"][0]["message"]["content"]
-        return json.loads(content)
-    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
+        parsed_plan = json.loads(content)
+        normalized_plan = _normalize_external_copilot_plan(parsed_plan)
+        if normalized_plan:
+            return normalized_plan
+        raise ValueError("External LLM returned an unexpected plan shape.")
+    except (KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
         fallback = _fallback_copilot_plan(context)
         fallback["review_caveats"].insert(
             0,

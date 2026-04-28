@@ -25,7 +25,9 @@ const ReportCopilotPanel = ({ token }) => {
     };
 
     const renderList = (title, items, renderItem) => {
-        if (!items || items.length === 0) {
+        const visibleItems = Array.isArray(items) ? items.filter(Boolean) : [];
+
+        if (visibleItems.length === 0) {
             return null;
         }
 
@@ -33,7 +35,7 @@ const ReportCopilotPanel = ({ token }) => {
             <div className="mb-4">
                 <h5 className="mb-3"><b>{title}</b></h5>
                 <div className="d-flex flex-column gap-3">
-                    {items.map((item, index) => (
+                    {visibleItems.map((item, index) => (
                         <div key={`${title}-${index}`} className="border-start border-3 ps-3">
                             {renderItem(item)}
                         </div>
@@ -96,15 +98,15 @@ const ReportCopilotPanel = ({ token }) => {
 
                     {renderList("Priority gaps", copilotPlan.priority_gaps, (item) => (
                         <>
-                            <p className="mb-1"><b>{item.dimension}</b></p>
-                            <p className="mb-0">{item.why_it_matters}</p>
+                            <p className="mb-1"><b>{item.dimension || "Priority gap"}</b></p>
+                            <p className="mb-0">{item.why_it_matters || item.rationale || item.detail || String(item)}</p>
                         </>
                     ))}
 
                     {renderList("Recommended actions", copilotPlan.recommended_actions, (item) => (
                         <>
-                            <p className="mb-1"><b>{item.action}</b></p>
-                            <p className="mb-0">{item.detail}</p>
+                            <p className="mb-1"><b>{item.action || item.recommendation || "Recommended action"}</b></p>
+                            <p className="mb-0">{item.detail || item.rationale || item.description || String(item)}</p>
                         </>
                     ))}
 
