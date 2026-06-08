@@ -47,6 +47,26 @@ const Report = () => {
 
     const { token } = useParams();
 
+    const getAssessedDimensionIds = () => {
+        const explicitIds = reportData?.details?.assessed_dimension_ids;
+        if (Array.isArray(explicitIds) && explicitIds.length > 0) {
+            return explicitIds.map(id => Number(id));
+        }
+
+        return (reportData?.details?.dimension_scores || [])
+            .map(score => Number(score.dimensions_id_dimensions_id))
+            .filter(Boolean);
+    };
+
+    const getDimensionById = () => {
+        return new Map(
+            (reportData?.details?.dimensions || []).map(dimension => [
+                Number(dimension.id),
+                dimension,
+            ])
+        );
+    };
+
     useEffect(() => {
         const getReport = async () => {
             setReportCode(token);
@@ -98,20 +118,17 @@ const Report = () => {
 
     const getChartData = () => {
         if (reportData?.details?.dimensions && reportData?.details?.dimension_scores) {
+            const dimensionById = getDimensionById();
 
-            // Sum all scale_labels (not 'n/a') for each dimension
-            const scaleLabelCounts = reportData.details.dimensions.map(dimension => {
-                return dimension.statements.reduce((sum, statement) => {
+            const normalizedScores = reportData.details.dimension_scores.map((item) => {
+                const dimension = dimensionById.get(Number(item.dimensions_id_dimensions_id));
+                const totalLabels = (dimension?.statements || []).reduce((sum, statement) => {
                     if (statement.scale_labels && statement.scale_labels !== "n/a") {
                         return sum + statement.scale_labels.split(',').length;
                     }
                     return sum;
-                }, 0);
-            });
+                }, 0) || 1;
 
-            // Get dimension_scores and divide by total scale_labels for each dimension
-            const normalizedScores = reportData.details.dimension_scores.map((item, idx) => {
-                const totalLabels = scaleLabelCounts[idx] || 1; // avoid division by zero
                 return item.reports_score_dimension_score / totalLabels;
             });
 
@@ -226,7 +243,22 @@ const Report = () => {
     //STATEMENTS AND ANSWERS
     useEffect(() => {
         if (reportData?.details?.dimensions) {
-            const formatted = reportData.details.dimensions.map(dimension => ({
+            const assessedDimensionIds = new Set(getAssessedDimensionIds());
+            const dimensionScoreOrder = new Map(
+                (reportData?.details?.dimension_scores || []).map((score, index) => [
+                    Number(score.dimensions_id_dimensions_id),
+                    index,
+                ])
+            );
+
+            const formatted = reportData.details.dimensions
+                .filter(dimension => assessedDimensionIds.size === 0 || assessedDimensionIds.has(Number(dimension.id)))
+                .sort((a, b) => {
+                    const orderA = dimensionScoreOrder.get(Number(a.id)) ?? Number.MAX_SAFE_INTEGER;
+                    const orderB = dimensionScoreOrder.get(Number(b.id)) ?? Number.MAX_SAFE_INTEGER;
+                    return orderA - orderB;
+                })
+                .map(dimension => ({
                 id: dimension.id,
                 name: dimension.name,
                 description: dimension.description,

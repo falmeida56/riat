@@ -730,6 +730,9 @@ class ReportSerializer(serializers.ModelSerializer):
         # Get dimension scores
         scores = ReportsScore.objects.filter(reports_id_reports=obj)
         report_details['dimension_scores'] = ReportsScoreSerializer(scores, many=True).data
+        report_details['assessed_dimension_ids'] = list(
+            scores.values_list('dimensions_id_dimensions_id', flat=True)
+        )
 
         # Get associated project
         submission = obj.submissions_id_submissions

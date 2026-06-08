@@ -4,6 +4,7 @@ import { useState } from "react";
 const SelectPhase = () => {
 
     const { projectPhase, setProjectPhase } = useProject();
+    const selectedPhase = String(projectPhase || '');
 
     const [initialPhase] = useState(projectPhase);
 
@@ -17,9 +18,9 @@ const SelectPhase = () => {
                 <div className="radio-group">
                     <label
                         htmlFor="option1"
-                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${projectPhase === "1" ? "" : "bg-light "
+                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${selectedPhase === "1" ? "" : "bg-light "
                             }`}
-                        style={projectPhase === "1" ? { backgroundColor: "#64c8eb" } : {}}
+                        style={selectedPhase === "1" ? { backgroundColor: "#64c8eb" } : {}}
                     >
                         <input
                             className="radio-input"
@@ -27,7 +28,7 @@ const SelectPhase = () => {
                             name="phase"
                             id="option1"
                             value="1"
-                            checked={projectPhase === "1"}
+                            checked={selectedPhase === "1"}
                             disabled={parseInt(initialPhase, 10) > 1}
 
                             onChange={(e) => setProjectPhase(e.target.value)}
@@ -36,9 +37,9 @@ const SelectPhase = () => {
                     </label>
                     <label
                         htmlFor="option2"
-                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${projectPhase === "2" ? "" : "bg-light "
+                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${selectedPhase === "2" ? "" : "bg-light "
                             }`}
-                        style={projectPhase === "2" ? { backgroundColor: "#64c8eb" } : {}}
+                        style={selectedPhase === "2" ? { backgroundColor: "#64c8eb" } : {}}
                     >
                         <input
                             className="radio-input"
@@ -46,7 +47,7 @@ const SelectPhase = () => {
                             name="phase"
                             id="option2"
                             value="2"
-                            checked={projectPhase === "2"}
+                            checked={selectedPhase === "2"}
                             disabled={parseInt(initialPhase, 10) >= 2}
                             onChange={(e) => setProjectPhase(e.target.value)}
                         />
@@ -54,9 +55,9 @@ const SelectPhase = () => {
                     </label>
                     <label
                         htmlFor="option3"
-                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${projectPhase === "3" ? "" : "bg-light"
+                        className={`radio-label border-1 py-4 px-3 rounded-2 my-2 ${selectedPhase === "3" ? "" : "bg-light"
                             }`}
-                        style={projectPhase === "3" ? { backgroundColor: "#64c8eb" } : {}}
+                        style={selectedPhase === "3" ? { backgroundColor: "#64c8eb" } : {}}
                     >
                         <input
                             className="radio-input"
@@ -64,7 +65,7 @@ const SelectPhase = () => {
                             name="phase"
                             id="option3"
                             value="3"
-                            checked={projectPhase === "3"}
+                            checked={selectedPhase === "3"}
                             onChange={(e) => setProjectPhase(e.target.value)}
                         />
                         <p className="mb-0 ms-3"><b>Phase 3</b> - At the end of the project, before launching the project results and go-to-market</p>

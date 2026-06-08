@@ -11,6 +11,7 @@ const AssessmentFive = ({ loading, projectPhase, allDimensions, topLevelDimensio
 
     // Use topLevelDimensions to get subdimensions, not allDimensions
     const currentTopLevelDimension = topLevelDimensions[currentDimension];
+    const canRenderCurrentDimension = allDimensions.length > 0 && topLevelDimensions.length > 0 && currentTopLevelDimension && loading === false;
     const subDimensionsInfo = currentTopLevelDimension ? allDimensions.filter(dimension =>
         currentTopLevelDimension.sub_dimensions?.some(subId => subId === dimension.id_dimensions)
     ) : [];
@@ -24,7 +25,7 @@ const AssessmentFive = ({ loading, projectPhase, allDimensions, topLevelDimensio
 
     return (
         <>
-            {allDimensions.length > 0 && topLevelDimensions.length > 0 && loading === false && (
+            {canRenderCurrentDimension && (
                 <div className="global-container">
                     <AssessmentAlert show={showAlert} setShow={setShowAlert} />
                     <div className="create-project-container">

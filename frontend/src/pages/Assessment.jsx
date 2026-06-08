@@ -48,9 +48,46 @@ const Assessment = () => {
 
     const firstRender = useRef(true);
 
+    const getSurveyForPhase = async (phase) => {
+        const response = await api.get('/api/survey/get/');
+        const surveys = response.data;
+        const normalizedPhase = Number(phase);
+        const survey = surveys.find(s =>
+            s.survey_name.match(/\d+/g)?.map(Number).includes(normalizedPhase)
+        );
+
+        if (!survey) {
+            throw new Error(`No survey found for phase ${normalizedPhase}.`);
+        }
+
+        return survey;
+    };
+
+    const getCurrentUserProjectId = async (currentProjectId) => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            throw new Error("Could not identify the current user.");
+        }
+
+        const response = await api.get(`/api/project/get/${user.id}/`);
+        const project = response.data.find(item => Number(item.id_projects) === Number(currentProjectId));
+        const userProjectId = project?.metadata?.[0]?.id_users_has_projects || project?.metadata_data?.[0]?.id_users_has_projects;
+
+        if (!userProjectId) {
+            throw new Error("Could not find the user-project relation for this project.");
+        }
+
+        return userProjectId;
+    };
+
     //GET SUBMISSION DATA
 
     useEffect(() => {
+        setSelectedDimensionIds([]);
+        setFilteredTopLevelDimensions([]);
+        setCurrentDimension(0);
+        setDimensionStage(1);
+        setIsAssessmentReady(false);
 
         if (id !== undefined) {
 
@@ -59,21 +96,27 @@ const Assessment = () => {
                     const response = await api.get(`/api/submission/${id}/`);
 
                     setSurveyId(response.data.surveys_id_surveys);
-                    
+
                     // Try to load saved dimension selection from localStorage
                     const savedSelection = localStorage.getItem(`dimension_selection_${id}`);
                     if (savedSelection) {
-                        setSelectedDimensionIds(JSON.parse(savedSelection));
-                        // If dimensions already selected, go to assessment
-                        setStep(5);
+                        const parsedSelection = JSON.parse(savedSelection);
+                        if (Array.isArray(parsedSelection) && parsedSelection.length > 0) {
+                            setSelectedDimensionIds(parsedSelection);
+                            // If dimensions already selected, go to assessment
+                            setStep(5);
+                        } else {
+                            localStorage.removeItem(`dimension_selection_${id}`);
+                            setStep(4.5);
+                        }
                     } else {
                         // If no dimensions selected yet, go to dimension selection
                         setStep(4.5);
                     }
 
                 } catch (error) {
-                    alert(error);
                     console.error(error);
+                    setError("Could not load this assessment. Please return to Projects and try again.");
                 }
             }
 
@@ -264,30 +307,42 @@ const Assessment = () => {
         setLoading(true)
         e.preventDefault();
 
-        if (projectPhase === 1) {
+        const selectedPhase = Number(projectPhase);
+
+        if (!selectedPhase) {
+            setError("Please select a project phase to continue.");
             setLoading(false);
-            setSuccess('Phase selected successfully');
-            // Don't navigate yet - go to dimension selection first
-            setStep(4.5);
             return;
-        } else {
+        }
 
-            try {
+        try {
+            if (Number(projectPhase) !== 1) {
                 await api.patch(`/api/project/update/${projectId}/`, {
-                    project_phase: projectPhase,
+                    project_phase: selectedPhase,
                 });
-
-                setSuccess('Phase selected successfully');
-                // Don't navigate yet - go to dimension selection first
-                setStep(4.5);
-
-            } catch (error) {
-                alert(error);
-                console.error(error);
-
-            } finally {
-                setLoading(false);
             }
+
+            const survey = await getSurveyForPhase(selectedPhase);
+            const userProjectId = await getCurrentUserProjectId(projectId);
+            const response = await api.post(`/api/submission/`, {
+                surveys_id_surveys: survey.id_surveys,
+                users_has_projects_id_users_has_projects: userProjectId,
+                submission_state: 1,
+            });
+
+            const submissionId = response.data.id_submissions;
+            setProjectPhase(selectedPhase);
+            setSurveyId(survey.id_surveys);
+            setSelectedDimensionIds([]);
+            localStorage.removeItem(`dimension_selection_${submissionId}`);
+            setSuccess('Phase selected successfully');
+            navigate(`/assessment/${submissionId}`);
+
+        } catch (error) {
+            console.error(error);
+            setError(error.response?.data?.error || error.message || "Could not start the assessment. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -302,6 +357,9 @@ const Assessment = () => {
         // Save dimension selection to localStorage
         if (id) {
             localStorage.setItem(`dimension_selection_${id}`, JSON.stringify(selectedDimensionIds));
+        } else {
+            setError("The assessment could not be started because no submission was created. Please return to Projects and try again.");
+            return;
         }
         
         setError('');
@@ -408,16 +466,40 @@ const Assessment = () => {
     // STEP 5 - FILTER TOP LEVEL DIMENSIONS BASED ON USER SELECTION
     useEffect(() => {
         if (topLevelDimensions.length > 0 && selectedDimensionIds.length > 0) {
-            const filtered = topLevelDimensions.filter(d => selectedDimensionIds.includes(d.id_dimensions));
+            const availableIds = new Set(topLevelDimensions.map(d => d.id_dimensions));
+            const validSelectedIds = selectedDimensionIds.filter(dimensionId => availableIds.has(dimensionId));
+
+            if (validSelectedIds.length !== selectedDimensionIds.length) {
+                setSelectedDimensionIds(validSelectedIds);
+                if (id && validSelectedIds.length > 0) {
+                    localStorage.setItem(`dimension_selection_${id}`, JSON.stringify(validSelectedIds));
+                }
+            }
+
+            if (validSelectedIds.length === 0) {
+                if (id) {
+                    localStorage.removeItem(`dimension_selection_${id}`);
+                }
+                setFilteredTopLevelDimensions([]);
+                setDimensionsNumber(topLevelDimensions.length);
+                if (step === 5) {
+                    setStep(4.5);
+                }
+                return;
+            }
+
+            const filtered = topLevelDimensions.filter(d => validSelectedIds.includes(d.id_dimensions));
             setFilteredTopLevelDimensions(filtered);
             setDimensionsNumber(filtered.length);
         }
-    }, [topLevelDimensions, selectedDimensionIds]);
+    }, [topLevelDimensions, selectedDimensionIds, id, step]);
 
     // STEP 5 - RENDER ASSESSMENT IF READY
     useEffect(() => {
         if (step === 5 && surveyId && allDimensions.length > 0) {
             setIsAssessmentReady(true);
+        } else {
+            setIsAssessmentReady(false);
         }
 
     }, [step, surveyId, allDimensions]);
@@ -425,7 +507,7 @@ const Assessment = () => {
 
     // STEP 5 - PROCEED TO NEXT DIMENSION
     const handleDimensionChange = (index) => {
-        if (index >= 0 && index < allDimensions.length) {
+        if (index >= 0 && index < filteredTopLevelDimensions.length) {
             setCurrentDimension(index);
             setDimensionStage(1);
         }
@@ -482,6 +564,7 @@ const Assessment = () => {
             setSelectedValues({});
         } catch (error) {
             alert('Error submitting answers. Please try again.');
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -519,6 +602,13 @@ const Assessment = () => {
             getExistingAnswers();
         }
     }, [id, currentDimension, submittingAssessment]);
+
+    useEffect(() => {
+        if (filteredTopLevelDimensions.length > 0 && currentDimension >= filteredTopLevelDimensions.length) {
+            setCurrentDimension(0);
+            setDimensionStage(1);
+        }
+    }, [filteredTopLevelDimensions, currentDimension]);
 
     // STEP 5 - SET CURRENT DIMENSION BASED ON LAST ANSWERED STATEMENT
     /*  useEffect(() => {
@@ -603,13 +693,44 @@ const Assessment = () => {
 
     // STEP 5 - SUBMIT ASSESSMENT
 
+    const getAssessedDimensions = () => {
+        const selectedTopLevelIds = new Set(filteredTopLevelDimensions.map(dimension => dimension.id_dimensions));
+        const selectedSubDimensionIds = new Set(
+            filteredTopLevelDimensions.flatMap(dimension => dimension.sub_dimensions || [])
+        );
+
+        return allDimensions.filter(dimension =>
+            selectedTopLevelIds.has(dimension.id_dimensions) ||
+            selectedSubDimensionIds.has(dimension.id_dimensions)
+        );
+    };
+
     const handleAssessmentSubmit = async (e) => {
 
         e.preventDefault();
 
         setLoading(true);
 
-        const finalScore = Object.values(existingAnswers).reduce((sum, object) => {
+        const assessedDimensions = getAssessedDimensions();
+        const assessedStatementIds = new Set(
+            assessedDimensions.flatMap(dimension =>
+                (dimension.statements || []).map(statement => String(statement.id_statements))
+            )
+        );
+
+        const answersForReport = {
+            ...existingAnswers,
+            ...Object.entries(selectedValues).reduce((acc, [statementId, value]) => {
+                acc[statementId] = { value };
+                return acc;
+            }, {})
+        };
+
+        const finalScore = Object.entries(answersForReport).reduce((sum, [statementId, object]) => {
+            if (!assessedStatementIds.has(String(statementId))) {
+                return sum;
+            }
+
             const value = object.value;
             return typeof value === 'number' ? sum + value : sum;
         }, 0);
@@ -618,15 +739,16 @@ const Assessment = () => {
 
         if (finalScore === 0) {
             setSubmitMessage("You responded 'prefer not to answer' to all questions, so the data is insufficient to generate meaningful recommendations. Consider revising your inputs the next time you complete this assessment.")
+            setLoading(false);
             return
         } else {
             setSubmitMessage("Generating your results, please wait a moment.")
         };
 
-        const totalStatements = allDimensions.flatMap(dimension => dimension.statements).filter(
+        const totalStatements = assessedDimensions.flatMap(dimension => dimension.statements || []).filter(
             (statement) => statement.statement_name !== 'Provide Examples');
 
-        const totalStatementsLength = allDimensions.flatMap(dimension => dimension.statements).filter(
+        const totalStatementsLength = assessedDimensions.flatMap(dimension => dimension.statements || []).filter(
             (statement) => statement.statement_name !== 'Provide Examples'
         ).length;
 
@@ -640,9 +762,9 @@ const Assessment = () => {
         console.log(totalStatementsLength)
 
         const pointsByDimension = () => {
-            return allDimensions.map(dimension => {
-                const totalPointsByDimension = dimension.statements.reduce((sum, statement) => {
-                    const value = existingAnswers[statement.id_statements]?.value;
+            return assessedDimensions.map(dimension => {
+                const totalPointsByDimension = (dimension.statements || []).reduce((sum, statement) => {
+                    const value = answersForReport[statement.id_statements]?.value;
                     return typeof value === 'number' ? sum + value : sum;
                 }, 0);
                 return { dimensionId: dimension.id_dimensions, totalPointsByDimension };
@@ -654,11 +776,7 @@ const Assessment = () => {
         try {
             await handleStatementAnswerSubmit();
 
-            await api.patch(`/api/submission/${id}/`, {
-                submission_state: 2,
-            });
-
-            const response = await api.post(`api/report/${id}/`, {
+            const response = await api.post(`/api/report/${id}/`, {
                 submissions_id_submissions: id,
                 final_score: finalScore,
                 max_possible_points: maxPointsPossible,
@@ -668,14 +786,23 @@ const Assessment = () => {
             });
 
             const token = response.data.report_token;
+            if (!token) {
+                setSubmitMessage("The report could not be generated because the server did not return a report code. Please try again or contact the RIAT team.");
+                return;
+            }
+
+            await api.patch(`/api/submission/${id}/`, {
+                submission_state: 2,
+            });
 
             setTimeout(() => {
                 navigate(`/report/${token}`);
             }, 4000);
 
         } catch (error) {
-            alert(error);
             console.error(error);
+            const message = error.response?.data?.error || "The report could not be generated. Please try again or contact the RIAT team.";
+            setSubmitMessage(message);
         } finally {
             setLoading(false);
         }
@@ -702,6 +829,27 @@ const Assessment = () => {
                     setSelectedDimensionIds={setSelectedDimensionIds}
                     handleDimensionSelectionSubmit={handleDimensionSelectionSubmit}
                 />
+            )}
+            {step === 4.5 && loading && topLevelDimensions.length === 0 && (
+                <div className="global-container">
+                    <div className="create-project-container">
+                        <p className="mb-0">Loading dimensions...</p>
+                    </div>
+                </div>
+            )}
+            {step === 4.5 && !loading && surveyId && topLevelDimensions.length === 0 && (
+                <div className="global-container">
+                    <div className="create-project-container">
+                        <p className="error-message">No dimensions were available for this assessment. Please return to Projects and try again.</p>
+                    </div>
+                </div>
+            )}
+            {id !== undefined && !loading && !surveyId && (
+                <div className="global-container">
+                    <div className="create-project-container">
+                        <p className="error-message">This assessment could not be loaded. Please return to Projects and try again.</p>
+                    </div>
+                </div>
             )}
             {isAssessmentReady && step === 5 && (
                 <>

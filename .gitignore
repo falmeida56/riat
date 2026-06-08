@@ -173,7 +173,7 @@ cython_debug/
 .pypirc
 
 # Local-only RIAT meeting notes
-/misc/
+/01-resources/
 
 # Media files
 .mp3
