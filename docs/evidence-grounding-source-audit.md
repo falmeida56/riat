@@ -39,6 +39,14 @@ Binary documents and spreadsheets were not fully imported into the application. 
 - Report Copilot output can render `reference_sources` with source and dimension information.
 - A CSV import path exists for reviewed source batches:
 
+## Backend Validation Baseline
+
+As of 2026-07-09, the grounding-reference backend path was validated with:
+
+- `DB_ENGINE=sqlite python backend/manage.py test api.tests.GroundingReferenceImportParserTests api.tests.GroundingReferenceSerializerTests api.tests.GroundingReferenceApiTests api.tests.CopilotPlanNormalizationTests` - focused grounding-reference backend tests: 10 tests, OK.
+- `DB_ENGINE=sqlite python backend/manage.py test api` - full api backend tests: 13 tests, OK.
+- `DB_ENGINE=sqlite python backend/manage.py check` - Django system check: no issues.
+
 ```bash
 cd backend
 .venv/bin/python manage.py import_grounding_references ../docs/templates/grounding-references-template.csv --validate-csv-only
