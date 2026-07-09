@@ -128,6 +128,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -179,3 +181,15 @@ cython_debug/
 .mp3
 .mp4
 .m4a
+
+# macOS metadata
+.DS_Store
+._*
+
+# Local Codex/audit artifacts
+.codex_tmp/
+.playwright-cli/
+output/playwright/
+
+# Generated frontend build output
+frontend/dist/

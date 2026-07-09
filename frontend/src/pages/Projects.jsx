@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
 import { useProject } from '../contexts/ProjectContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +14,7 @@ const Projects = () => {
     const [error, setError] = useState('');
     const [allProjects, setAllProjects] = useState([]);
     const [allSurveys, setAllSurveys] = useState([]);
-    const [surveySelector, setSurveySelector] = useState(false);
-    const [selectedSurveyId, setSelectedSurveyId] = useState(null);
-    const [selectedPhase, setSelectedPhase] = useState(null);
+    const [, setSurveySelector] = useState(false);
     const [showingReportsId, setShowingReportsId] = useState(null);
 
     //existing project
@@ -41,7 +39,7 @@ const Projects = () => {
 
         try {
 
-            const response = await api.post(`/api/project/adduser/${id_user}/${existingProjectCode}/`,
+            await api.post(`/api/project/adduser/${id_user}/${existingProjectCode}/`,
                 {
                     project_unique_code: existingProjectCode,
                     user_has_projects_role: newUserRole,
@@ -99,7 +97,7 @@ const Projects = () => {
 
         getAllProjects();
 
-    }, [success, error]);
+    }, [error, id_user, success, user_email]);
 
     //GET AVAILABLE SURVEYS
 

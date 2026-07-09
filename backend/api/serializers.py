@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import AnswersBase, AnswersBoolean, AnswersInteger, AnswersText, CustomUser, Dimensions, Projects, Scales, Statements, Surveys, Users, UsersHasProjects, Reports, ReportsOverallScore, OverallRecommendations, OverallScoreLevels, Submissions, ReportsScore
+from api.models import AnswersBase, AnswersBoolean, AnswersInteger, AnswersText, CustomUser, Dimensions, GroundingReference, Projects, Scales, Statements, Surveys, Users, UsersHasProjects, Reports, ReportsOverallScore, OverallRecommendations, OverallScoreLevels, Submissions, ReportsScore
 from django.utils.timezone import now
 from django.db.models import Q
 from datetime import timedelta
@@ -588,6 +588,84 @@ class OverallRecommendationSerializer(serializers.ModelSerializer):
     class Meta:
         model = OverallRecommendations
         fields = ['id_overall_recommendations', 'recommendation_name', 'recommendation_description']
+
+
+class GroundingDimensionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dimensions
+        fields = ['id_dimensions', 'dimension_name', 'dimension_order']
+
+
+class GroundingReferenceSerializer(serializers.ModelSerializer):
+    dimensions = serializers.PrimaryKeyRelatedField(
+        queryset=Dimensions.objects.all(),
+        many=True,
+        required=False,
+    )
+    dimension_details = GroundingDimensionSerializer(source='dimensions', many=True, read_only=True)
+    source_type_label = serializers.CharField(source='get_source_type_display', read_only=True)
+    review_status_label = serializers.CharField(source='get_review_status_display', read_only=True)
+
+    class Meta:
+        model = GroundingReference
+        fields = [
+            'id_grounding_reference',
+            'source_key',
+            'source_title',
+            'source_type',
+            'source_type_label',
+            'citation',
+            'url',
+            'summary',
+            'guidance',
+            'evidence_examples',
+            'applies_to_all_dimensions',
+            'dimensions',
+            'dimension_details',
+            'review_status',
+            'review_status_label',
+            'active',
+            'created_by',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['id_grounding_reference', 'created_by', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        applies_to_all = attrs.get(
+            'applies_to_all_dimensions',
+            self.instance.applies_to_all_dimensions if self.instance else False,
+        )
+        dimensions = attrs.get('dimensions')
+        if dimensions is None and self.instance:
+            dimensions = list(self.instance.dimensions.all())
+
+        if not applies_to_all and not dimensions:
+            raise serializers.ValidationError(
+                "Assign at least one affected dimension or mark the source as applying to all dimensions."
+            )
+
+        return attrs
+
+    def create(self, validated_data):
+        dimensions = validated_data.pop('dimensions', [])
+        reference = GroundingReference.objects.create(**validated_data)
+        if not reference.applies_to_all_dimensions:
+            reference.dimensions.set(dimensions)
+        return reference
+
+    def update(self, instance, validated_data):
+        dimensions = validated_data.pop('dimensions', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if instance.applies_to_all_dimensions:
+            instance.dimensions.clear()
+        elif dimensions is not None:
+            instance.dimensions.set(dimensions)
+
+        return instance
 
 class ReportsOverallScoreSerializer(serializers.ModelSerializer):
     overall_recommendation = OverallRecommendationSerializer(source='overall_recommendations_id_overall_recommendations')

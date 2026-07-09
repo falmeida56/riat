@@ -26,8 +26,8 @@ const Assessment = () => {
     const { id } = useParams();
 
     // STEP 1 & 2
-    const [agreement, setAgreement] = useState(false);
-    const [instructionsRead, setInstructionsRead] = useState(false);
+    const [, setAgreement] = useState(false);
+    const [, setInstructionsRead] = useState(false);
 
     // STEP 5
     const [allDimensions, setAllDimensions] = useState([]);
@@ -41,7 +41,7 @@ const Assessment = () => {
     const [selectedValues, setSelectedValues] = useState([]);
     const [answersLoaded, setAnswersLoaded] = useState(false);
     const [existingAnswers, setExistingAnswers] = useState([]);
-    const [statementCounter, setStatementCounter] = useState(0);
+    const [statementCounter] = useState(0);
     const [submittingAssessment, setSubmittingAssessment] = useState(false);
     const [naSelected, setNaSelected] = useState({});
     const [submitMessage, setSubmitMessage] = useState('');
@@ -129,6 +129,9 @@ const Assessment = () => {
                 setStep(1);
             }
         }
+    // This initialization should run when the route submission id changes.
+    // Including `step` would reset in-progress new-assessment navigation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     /* STEP 1 - INSTRUCTIONS */
@@ -439,7 +442,7 @@ const Assessment = () => {
             getDimensionsAndStatements();
 
         }
-    }, [id, surveyId]);
+    }, [id, setLoading, surveyId]);
 
 
     // STEP 5 - GET DIMENSIONS THAT ARE NOT PART OF OTHER AS SUBDIMENSIONS
@@ -461,7 +464,7 @@ const Assessment = () => {
 
             setDimensionsNumber(topLevel.length);
         }
-    }, [allDimensions]);
+    }, [allDimensions, selectedDimensionIds.length, step]);
 
     // STEP 5 - FILTER TOP LEVEL DIMENSIONS BASED ON USER SELECTION
     useEffect(() => {
@@ -492,7 +495,7 @@ const Assessment = () => {
             setFilteredTopLevelDimensions(filtered);
             setDimensionsNumber(filtered.length);
         }
-    }, [topLevelDimensions, selectedDimensionIds, id, step]);
+    }, [topLevelDimensions, selectedDimensionIds, id, step, setStep]);
 
     // STEP 5 - RENDER ASSESSMENT IF READY
     useEffect(() => {
@@ -601,7 +604,7 @@ const Assessment = () => {
             };
             getExistingAnswers();
         }
-    }, [id, currentDimension, submittingAssessment]);
+    }, [id, currentDimension, setLoading, submittingAssessment]);
 
     useEffect(() => {
         if (filteredTopLevelDimensions.length > 0 && currentDimension >= filteredTopLevelDimensions.length) {
@@ -688,7 +691,7 @@ const Assessment = () => {
                 setNaSelected(newNaSelected);
             }
         }
-    }, [answersLoaded, currentDimension, dimensionStage, loading]);
+    }, [allDimensions, answersLoaded, currentDimension, dimensionStage, existingAnswers, loading, topLevelDimensions]);
 
 
     // STEP 5 - SUBMIT ASSESSMENT

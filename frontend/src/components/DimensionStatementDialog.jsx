@@ -6,7 +6,7 @@ const DimensionStatementDialog = ({ dialogRef, setAddStatement, id, handleStatem
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     return (
         <dialog className="dialog modal modal-content w-50" style={{ height: '30rem' }} ref={dialogRef}>

@@ -255,8 +255,7 @@ const AssessmentFive = ({ loading, projectPhase, allDimensions, topLevelDimensio
                                         } else if (dimensionStage === 2) {
                                             setDimensionStage(dimensionStage - 1);
                                         }
-                                        disabled = { loading }
-                                    }} className="forms-button">Back</button>
+                                    }} className="forms-button" disabled={loading}>Back</button>
                                 )}
                                 {currentDimension === dimensionsNumber - 1 && dimensionStage === 2 ? (
                                     <button onClick={() => {

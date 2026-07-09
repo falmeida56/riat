@@ -77,7 +77,8 @@ const LoginForm = ({ routeOne, routeTwo, method }) => {
     }
   };
 
-  const handleResetPasswordRequest = async () => {
+  const handleResetPasswordRequest = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       await api.post("/api/user/reset_password_request/", { email });
@@ -156,21 +157,29 @@ const LoginForm = ({ routeOne, routeTwo, method }) => {
             {/* Section #3 */}
             <form onSubmit={handleSubmit} className="login-form-container">
               <div className="form-group">
-                <label className="form-label">Email</label>
+                <label className="form-label" htmlFor={`${method}-email`}>Email</label>
                 <input
+                  id={`${method}-email`}
+                  name="email"
                   className="form-input"
                   type="email"
                   placeholder="Your email here..."
+                  autoComplete="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Password</label>
+                <label className="form-label" htmlFor={`${method}-password`}>Password</label>
                 <input
+                  id={`${method}-password`}
+                  name="password"
                   className="form-input"
                   type="password"
                   placeholder="Your password here..."
+                  autoComplete={method === "login" ? "current-password" : "new-password"}
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -178,17 +187,21 @@ const LoginForm = ({ routeOne, routeTwo, method }) => {
               {method === "register" && (
                 <>
                   <div className="form-group">
-                    <label className="form-label">Confirm Password</label>
+                    <label className="form-label" htmlFor="register-confirm-password">Confirm Password</label>
                     <input
+                      id="register-confirm-password"
+                      name="confirmPassword"
                       className="form-input"
                       type="password"
                       placeholder="Confirm your password"
+                      autoComplete="new-password"
+                      required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </div>
                   <label htmlFor="agreementRegister">
-                    <input type="checkbox" id="agreementRegister" name="agreementRegister" className="mt-1" />
+                    <input type="checkbox" id="agreementRegister" name="agreementRegister" className="mt-1" required />
                     <span className="ms-2">
                       Yes, I've read the <a href="/privacy_policy_riat.pdf" target="_blank" rel="noopener noreferrer">Privacy Policy</a> thoroughly and I'm ready to continue
                     </span>
@@ -227,11 +240,15 @@ const LoginForm = ({ routeOne, routeTwo, method }) => {
             {/* Section #3 */}
             <form onSubmit={handleResetPasswordRequest} className="login-form-container">
               <div className="form-group">
-                <label className="form-label">Email</label>
+                <label className="form-label" htmlFor="reset-request-email">Email</label>
                 <input
+                  id="reset-request-email"
+                  name="email"
                   className="form-input"
                   type="email"
                   placeholder="Your email here..."
+                  autoComplete="email"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -256,22 +273,38 @@ const LoginForm = ({ routeOne, routeTwo, method }) => {
             </div>
             {/* Section #3 */}
             <form onSubmit={handleResetPassword} className="login-form-container">
+              <input
+                type="text"
+                name="email"
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                hidden
+              />
               <div className="form-group">
-                <label className="form-label">Password</label>
+                <label className="form-label" htmlFor="reset-password">Password</label>
                 <input
+                  id="reset-password"
+                  name="password"
                   className="form-input"
                   type="password"
                   placeholder="Your password here..."
+                  autoComplete="new-password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Confirm Password</label>
+                <label className="form-label" htmlFor="reset-confirm-password">Confirm Password</label>
                 <input
+                  id="reset-confirm-password"
+                  name="confirmPassword"
                   className="form-input"
                   type="password"
                   placeholder="Confirm your password"
+                  autoComplete="new-password"
+                  required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />

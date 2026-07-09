@@ -121,6 +121,22 @@ const ReportCopilotPanel = ({ token }) => {
                         </div>
                     )}
 
+                    {renderList("Reference sources", copilotPlan.reference_sources, (item) => (
+                        <>
+                            <p className="mb-1"><b>{item.title || item.source_key || "Reference source"}</b></p>
+                            {item.source_key && <p className="mb-1 text-muted">{item.source_key}</p>}
+                            {Array.isArray(item.dimensions) && item.dimensions.length > 0 && (
+                                <div className="d-flex flex-wrap gap-2">
+                                    {item.dimensions.map((dimension, index) => (
+                                        <span key={`${item.source_key || item.title}-${index}`} className="badge text-bg-light border">
+                                            {dimension.name || dimension.dimension_name || String(dimension)}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    ))}
+
                     {renderList("Responsible AI notes", copilotPlan.responsible_ai_notes, (item) => (
                         <p className="mb-0">{item}</p>
                     ))}

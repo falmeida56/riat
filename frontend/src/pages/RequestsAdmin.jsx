@@ -26,19 +26,18 @@ const RequestsAdmin = () => {
     const handleRequestApproval = async (id) => {
 
         try {
-            const response = await api.post(`api/projects/requests/decision/${id}/`);
+            await api.post(`api/projects/requests/decision/${id}/`);
             setActionDone(true);
         } catch (error) {
             alert(error);
             console.error(error);
-        } finally {
         }
     }
 
     const handleRequestRefusal = async (id) => {
 
         try {
-            const response = await api.delete(`api/projects/requests/decision/${id}/`);
+            await api.delete(`api/projects/requests/decision/${id}/`);
             setActionDone(true);
         } catch (error) {
             alert(error);

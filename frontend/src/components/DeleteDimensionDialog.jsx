@@ -7,7 +7,7 @@ const DeleteDimensionDialog = ({ dialogRef, setDeletingDimension, id, handleDele
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     const [inputValue, setInputValue] = useState('');
 

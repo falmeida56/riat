@@ -208,14 +208,12 @@ const ReportDocument = ({
     projectName,
     projectOrganization,
     projectPhase,
-    projectAcronym,
     chartImage,
     dimensionsData,
     score,
     maxScore,
     recommendationLevel,
-    recommendation,
-    sanitizeSimple
+    recommendation
 }) => (
     <Document>
         <Page size="A4" style={styles.page}>

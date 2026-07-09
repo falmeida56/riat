@@ -1,7 +1,6 @@
-const SubDimensions = ({ subDimensionsInfo, selectedValues, setSelectedValues, naSelected, setNaSelected, explanation, setExplanation, example, setExample, currentDimension, sanitizeSimple }) => {
+const SubDimensions = ({ subDimensionsInfo, selectedValues, setSelectedValues, naSelected, setNaSelected, explanation, example, currentDimension, sanitizeSimple }) => {
 
     let statementCounter = 0;
-    let currentSubDimension = 0;
 
     return (
         <>
@@ -13,11 +12,10 @@ const SubDimensions = ({ subDimensionsInfo, selectedValues, setSelectedValues, n
                             {currentDimension + 1}.{subDimensionIndex + 2}. {subDimension.dimension_name}
                         </h2>
                         <p className="sub-dimension-description mb-0">{subDimension.dimension_description}</p>
-                        {subDimension.statements?.map((statement, statementIndex) => {
+                        {subDimension.statements?.map((statement) => {
 
                             const allNaSelected = Object.values(naSelected).every(v => v === true);
 
-                            currentSubDimension++;
                             statementCounter++;
 
                             if (!statement.scale.scale_levels > 0 && allNaSelected) {

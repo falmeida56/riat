@@ -64,6 +64,16 @@ const ToolBarAdmin = () => {
                         </li>
                         <li>
                             <a
+                                href="/groundingreferences"
+                                className={`nav-link ${currentPage === 'groundingreferences' ? 'selected-toolbar' : 'link-body-emphasis'
+                                    }`}
+                                aria-current={currentPage === 'groundingreferences' ? 'page' : undefined}
+                            >
+                                Grounding Sources
+                            </a>
+                        </li>
+                        <li>
+                            <a
                                 href="/scaletools"
                                 className={`nav-link ${currentPage === 'scaletools' ? 'selected-toolbar' : 'link-body-emphasis'
                                     }`}

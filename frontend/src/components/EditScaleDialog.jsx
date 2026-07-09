@@ -8,7 +8,7 @@ const EditScaleDialog = ({ dialogRef, setScaleId, scaleName, setScaleName, scale
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     return (
         <dialog ref={dialogRef} className='dialog'>

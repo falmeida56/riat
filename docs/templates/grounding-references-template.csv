@@ -1,0 +1,2 @@
+source_key,source_title,source_type,citation,url,summary,guidance,evidence_examples,applies_to_all_dimensions,dimensions,review_status,active,created_by
+EDU-001,Example reviewed education source,article,"Author, A. (2026). Example citation. Journal.","https://doi.org/example","Short source summary.","Guidance this source can support.","Relevant evidence examples or extraction notes.",false,"Educational|Governance",reviewed,true,csv-import

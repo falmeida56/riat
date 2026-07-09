@@ -6,7 +6,7 @@ const SurveyDimensionDialog = ({ allDimensions, dialogRef, setEditing, id, handl
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     return (
         <dialog className="dialog modal modal-content w-50" style={{ height: '42rem' }} ref={dialogRef}>

@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from rest_framework import generics, viewsets
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.utils.timezone import now
-from .serializers import AnswerBaseSerializer, UserRegistrationSerializer, LoginSerializer, SurveySerializer, ProjectSerializer, ScaleSerializer, DimensionSerializer, StatementSerializer, SubmissionsSerializer, ReportSerializer, PasswordResetRequestSerializer, PasswordResetSerializer,  OverallRecommendationSerializer
-from .models import AnswersBase, Surveys, Projects, Scales, Dimensions, Statements, UsersHasProjects, AnswersInteger, AnswersBoolean, AnswersText, Reports, Submissions, ReportsOverallScore, OverallRecommendations
+from django.db.models import Q
+from .serializers import AnswerBaseSerializer, UserRegistrationSerializer, LoginSerializer, SurveySerializer, ProjectSerializer, ScaleSerializer, DimensionSerializer, StatementSerializer, SubmissionsSerializer, ReportSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, OverallRecommendationSerializer, GroundingReferenceSerializer
+from .models import AnswersBase, Surveys, Projects, Scales, Dimensions, Statements, UsersHasProjects, AnswersInteger, AnswersBoolean, AnswersText, Reports, Submissions, ReportsOverallScore, OverallRecommendations, GroundingReference
 from rest_framework.permissions import  AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView
@@ -166,6 +168,7 @@ def _build_ai_context(report, report_details, document_excerpt=""):
     recommendation = overall_score.overall_recommendations_id_overall_recommendations
     project = report_details.get("project", {})
     dimension_items = _score_dimension_items(report, report_details)
+    grounding_references = _collect_grounding_references(dimension_items)
     ai_patterns = [
         r"\bai\b", r"\bartificial intelligence\b", r"\bmachine learning\b",
         r"\banalytics\b", r"\bcomputer vision\b", r"\bautonomous\b",
@@ -197,7 +200,48 @@ def _build_ai_context(report, report_details, document_excerpt=""):
         ],
         "document_excerpt": document_excerpt[:6000],
         "appears_ai_or_data_intensive": any(re.search(pattern, project_text) for pattern in ai_patterns),
+        "grounding_references": grounding_references,
     }
+
+
+def _collect_grounding_references(dimension_items):
+    dimension_ids = [
+        item.get("dimension_id")
+        for item in dimension_items
+        if item.get("dimension_id")
+    ]
+    references = (
+        GroundingReference.objects
+        .filter(active=True, review_status__in=["reviewed", "approved"])
+        .filter(Q(applies_to_all_dimensions=True) | Q(dimensions__id_dimensions__in=dimension_ids))
+        .prefetch_related("dimensions")
+        .distinct()
+        .order_by("source_title")[:12]
+    )
+
+    return [
+        {
+            "source_id": reference.id_grounding_reference,
+            "source_key": reference.source_key,
+            "title": reference.source_title,
+            "source_type": reference.get_source_type_display(),
+            "review_status": reference.get_review_status_display(),
+            "citation": reference.citation[:500],
+            "url": reference.url,
+            "summary": reference.summary[:700],
+            "guidance": reference.guidance[:900],
+            "evidence_examples": reference.evidence_examples[:700],
+            "applies_to_all_dimensions": reference.applies_to_all_dimensions,
+            "dimensions": [
+                {
+                    "id": dimension.id_dimensions,
+                    "name": dimension.dimension_name,
+                }
+                for dimension in reference.dimensions.all()
+            ],
+        }
+        for reference in references
+    ]
 
 
 def _build_dimension_action(item):
@@ -338,6 +382,15 @@ def _fallback_copilot_plan(context):
             "and concrete evidence. This makes the project easier to monitor internally and easier to describe "
             "credibly in impact, governance, or reporting language."
         ),
+        "reference_sources": [
+            {
+                "source_id": reference["source_id"],
+                "source_key": reference["source_key"],
+                "title": reference["title"],
+                "dimensions": reference["dimensions"],
+            }
+            for reference in context.get("grounding_references", [])[:5]
+        ],
         "responsible_ai_notes": responsible_ai_notes,
         "review_caveats": [
             "This is a deterministic RIAT draft because an external LLM response was not available.",
@@ -370,6 +423,7 @@ def _normalize_external_copilot_plan(plan):
             plan.get("proposal_or_impact_language"),
             [],
         ) or _first_text_value(plan, ["proposal_or_impact_language", "impact_language", "reporting_language"]),
+        "reference_sources": [],
         "responsible_ai_notes": [],
         "review_caveats": [],
     }
@@ -405,6 +459,18 @@ def _normalize_external_copilot_plan(plan):
             if text:
                 normalized[key].append(text)
 
+    for item in plan.get("reference_sources") or []:
+        if not item:
+            continue
+        title = _first_text_value(item, ["title", "source", "citation", "source_key"])
+        if title:
+            normalized["reference_sources"].append({
+                "source_id": _first_text_value(item, ["source_id", "id"]),
+                "source_key": _first_text_value(item, ["source_key", "key"]),
+                "title": title,
+                "dimensions": item.get("dimensions") if isinstance(item, dict) else [],
+            })
+
     return normalized
 
 
@@ -415,10 +481,14 @@ def _call_external_llm(context):
 
     model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     api_url = os.getenv("OPENAI_API_URL", "https://api.openai.com/v1/chat/completions")
+    timeout_seconds = int(os.getenv("OPENAI_TIMEOUT_SECONDS", "45"))
     system_prompt = (
         "You are RIAT Copilot, an assistant for responsible innovation assessment. "
         "Return concise, practical, action-oriented, evidence-oriented recommendations. "
         "Use the RIAT assessment as the primary source, including scaled answers and written example fields. "
+        "Use curated grounding references from riat_context.grounding_references when they are relevant, "
+        "and include those sources in reference_sources. "
+        "If no curated source supports a recommendation, say so in review_caveats. "
         "Treat pasted project text only as optional enrichment. "
         "Prioritize concrete next steps, ownership-ready guidance, evidence to collect, and brief governance/process improvements. "
         "When useful, point out gaps between positive claims and weak scores or missing written evidence. "
@@ -432,6 +502,7 @@ def _call_external_llm(context):
             "recommended_actions": [{"action": "", "detail": ""}],
             "evidence_to_collect": [""],
             "proposal_or_impact_language": "",
+            "reference_sources": [{"source_id": "", "source_key": "", "title": "", "dimensions": []}],
             "responsible_ai_notes": [""],
             "review_caveats": [""],
         },
@@ -459,7 +530,7 @@ def _call_external_llm(context):
     )
 
     try:
-        with urllib.request.urlopen(request, timeout=45) as response:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
             response_data = json.loads(response.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
         fallback = _fallback_copilot_plan(context)
@@ -485,6 +556,16 @@ def _call_external_llm(context):
         return fallback
 
 # USERS_AUTH
+class HealthCheckView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({
+            "status": "ok",
+            "service": "riat-api",
+        }, status=status.HTTP_200_OK)
+
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny] 
@@ -519,15 +600,16 @@ class PasswordResetRequestView(APIView):
             user.password_reset_token_date = now()
             user.save()
 
-            # Build reset link dynamically based on request
-            scheme = request.scheme
-            host = request.get_host()
-            reset_link = f"{scheme}://{host}/resetpassword/{token}"
+            frontend_base_url = os.getenv("FRONTEND_BASE_URL", "").rstrip("/")
+            if frontend_base_url:
+                reset_link = f"{frontend_base_url}/resetpassword/{token}"
+            else:
+                reset_link = f"{request.scheme}://{request.get_host()}/resetpassword/{token}"
 
             send_mail(
                 'Password Reset',
                 f'Click the following link to reset your password: {reset_link}',
-                'no-reply@localhost.com',
+                settings.DEFAULT_FROM_EMAIL,
                 [user.user_email],
             )
 
@@ -1341,6 +1423,7 @@ class ReportCopilotView(APIView):
                     "project": context["project"],
                     "overall_score": context["overall_score"],
                     "appears_ai_or_data_intensive": context["appears_ai_or_data_intensive"],
+                    "grounding_references": context["grounding_references"],
                 },
             },
             status=status.HTTP_200_OK,
@@ -1387,3 +1470,44 @@ class UpdateOverallRecommendationsView(UpdateAPIView):
             instance.save()
             return Response({"message": "Overall recommendations updated successfully"}, status=status.HTTP_200_OK)
         return Response({"error": "overall_recommendations_description is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# GROUNDING REFERENCES
+
+
+class GroundingReferenceListCreateView(generics.ListCreateAPIView):
+    serializer_class = GroundingReferenceSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        queryset = GroundingReference.objects.prefetch_related('dimensions').all()
+        dimension_id = self.request.query_params.get('dimension_id')
+        active = self.request.query_params.get('active')
+        review_status = self.request.query_params.get('review_status')
+
+        if dimension_id:
+            queryset = queryset.filter(
+                Q(applies_to_all_dimensions=True) |
+                Q(dimensions__id_dimensions=dimension_id)
+            )
+        if active in {'true', 'false'}:
+            queryset = queryset.filter(active=active == 'true')
+        if review_status:
+            queryset = queryset.filter(review_status=review_status)
+
+        return queryset.distinct().order_by('source_title')
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=getattr(self.request.user, 'user_email', ''))
+
+
+class GroundingReferenceDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = GroundingReference.objects.prefetch_related('dimensions').all()
+    serializer_class = GroundingReferenceSerializer
+    permission_classes = [IsAdminUser]
+    lookup_field = 'id_grounding_reference'
+
+    def perform_destroy(self, instance):
+        instance.active = False
+        instance.review_status = 'retired'
+        instance.save(update_fields=['active', 'review_status', 'updated_at'])

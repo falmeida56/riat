@@ -47,4 +47,6 @@ export const ProjectProvider = ({ children }) => {
     );
 };
 
+// Context hooks intentionally live with their provider; this warning is dev-only.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useProject = () => useContext(ProjectContext);

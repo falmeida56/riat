@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import api from '../api';
 import Chart from "react-apexcharts";
-import DownloadPDFButton from "../components/PdfReport";
 import ReportAnswers from "../components/ReportAnswers";
 import ReportCopilotPanel from "../components/ReportCopilotPanel";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+
+const DownloadPDFButton = lazy(() => import("../components/PdfReport"));
 
 const Report = () => {
 
@@ -47,7 +48,7 @@ const Report = () => {
 
     const { token } = useParams();
 
-    const getAssessedDimensionIds = () => {
+    const getAssessedDimensionIds = useCallback(() => {
         const explicitIds = reportData?.details?.assessed_dimension_ids;
         if (Array.isArray(explicitIds) && explicitIds.length > 0) {
             return explicitIds.map(id => Number(id));
@@ -56,16 +57,16 @@ const Report = () => {
         return (reportData?.details?.dimension_scores || [])
             .map(score => Number(score.dimensions_id_dimensions_id))
             .filter(Boolean);
-    };
+    }, [reportData]);
 
-    const getDimensionById = () => {
+    const getDimensionById = useCallback(() => {
         return new Map(
             (reportData?.details?.dimensions || []).map(dimension => [
                 Number(dimension.id),
                 dimension,
             ])
         );
-    };
+    }, [reportData]);
 
     useEffect(() => {
         const getReport = async () => {
@@ -105,18 +106,18 @@ const Report = () => {
 
             setLoadedGeneralData(true);
         }
-    }, [reportData]);
+    }, [getAssessedDimensionIds, reportData]);
 
     //CHART DATA
-    const getChartCategories = () => {
+    const getChartCategories = useCallback(() => {
         if (reportData?.details?.dimension_scores) {
             const categories = reportData.details.dimension_scores.map(item => item.dimension_name);
             setChartCategories(categories);
             return categories;
         }
-    }
+    }, [reportData]);
 
-    const getChartData = () => {
+    const getChartData = useCallback(() => {
         if (reportData?.details?.dimensions && reportData?.details?.dimension_scores) {
             const dimensionById = getDimensionById();
 
@@ -136,7 +137,7 @@ const Report = () => {
             setChartData(percentageScores);
 
         }
-    }
+    }, [getDimensionById, reportData]);
 
     useEffect(() => {
         if (reportData?.details) {
@@ -144,7 +145,7 @@ const Report = () => {
             getChartData();
             setLoadedChartData(true);
         }
-    }, [reportData]);
+    }, [getChartCategories, getChartData, reportData]);
 
     const [options, setOptions] = useState({
         chart: {
@@ -238,7 +239,7 @@ const Report = () => {
             setRecommendation(recommendation);
             setLoadedScoreData(true);
         }
-    }, [reportData]);
+    }, [getAssessedDimensionIds, reportData]);
 
     //STATEMENTS AND ANSWERS
     useEffect(() => {
@@ -279,7 +280,7 @@ const Report = () => {
             setDimensionsData(formatted);
             setLoadedDimensionsData(true);
         }
-    }, [reportData]);
+    }, [getAssessedDimensionIds, reportData]);
 
     return (
         <div className="global-container" style={user?.user_role === 1 ? { marginLeft: '16rem', maxWidth: 'calc(100% - 16rem)', overflowX: 'auto' } : null}>
@@ -355,22 +356,24 @@ const Report = () => {
                 </div>
                 {
                     loadedGeneralData && loadedChartData && loadedDimensionsData && loadedScoreData && (
-                        <DownloadPDFButton
-                            token={token}
-                            creationTime={creationTime}
-                            projectName={projectName}
-                            projectOrganization={projectOrganization}
-                            projectPhase={projectPhase}
-                            projectAcronym={projectAcronym}
-                            series={series}
-                            options={options}
-                            dimensionsData={dimensionsData}
-                            score={score}
-                            maxScore={maxScore}
-                            recommendationLevel={recommendationLevel}
-                            recommendation={recommendation}
-                            sanitizeSimple={sanitizeSimple}
-                        />
+                        <Suspense fallback={<p>Preparing PDF tools...</p>}>
+                            <DownloadPDFButton
+                                token={token}
+                                creationTime={creationTime}
+                                projectName={projectName}
+                                projectOrganization={projectOrganization}
+                                projectPhase={projectPhase}
+                                projectAcronym={projectAcronym}
+                                series={series}
+                                options={options}
+                                dimensionsData={dimensionsData}
+                                score={score}
+                                maxScore={maxScore}
+                                recommendationLevel={recommendationLevel}
+                                recommendation={recommendation}
+                                sanitizeSimple={sanitizeSimple}
+                            />
+                        </Suspense>
                     )
                 }
             </div >

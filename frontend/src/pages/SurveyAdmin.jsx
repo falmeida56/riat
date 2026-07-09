@@ -31,8 +31,8 @@ const SurveyAdmin = () => {
     const [editingDimensionDescription, setEditingDimensionDescription] = useState(false);
     const [editingDimensionShortDescription, setEditingDimensionShortDescription] = useState(false);
     const [editingDimensionName, setEditingDimensionName] = useState(false);
-    const [updateDimensionDescription, setUpdateDimensionDescription] = useState(false);
-    const [updateDimensionShortDescription, setUpdateDimensionShortDescription] = useState(false);
+    const [, setUpdateDimensionDescription] = useState(false);
+    const [, setUpdateDimensionShortDescription] = useState(false);
     const [currentDimensionForStatement, setCurrentDimensionForStatement] = useState(null);
     const [dimensionsNumber, setDimensionsNumber] = useState(0);
 
@@ -40,8 +40,8 @@ const SurveyAdmin = () => {
     const [allScales, setAllScales] = useState([]);
     const [editingStatementDescription, setEditingStatementDescription] = useState(false);
     const [editingStatementName, setEditingStatementName] = useState(false);
-    const [updateStatementDescription, setUpdateStatementDescription] = useState(false);
-    const [updateStatementName, setUpdateStatementName] = useState(false);
+    const [, setUpdateStatementDescription] = useState(false);
+    const [, setUpdateStatementName] = useState(false);
     const [addStatement, setAddStatement] = useState(false);
 
     const dialogRef = useRef(null);
@@ -209,7 +209,7 @@ const SurveyAdmin = () => {
 
             } else {
 
-                const response = await api.post(`/api/dimension/create/${id}/`, {
+                await api.post(`/api/dimension/create/${id}/`, {
                     dimension_name: dimensionName,
                     dimension_short_description: dimensionShortDescription,
                     dimension_description: dimensionDescription,

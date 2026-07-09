@@ -68,8 +68,6 @@ const ScaleTools = () => {
         const isEditMode = scaleId && scaleId !== '';
         const name = isEditMode ? scaleNameEdit : scaleName;
         const levels = isEditMode ? scaleLevelsEdit : scaleLevels;
-        const labels = isEditMode ? scaleLabelsEdit : scaleLabels;
-
         if (!name || !levels || labelsArray.length < numberInputs.length || labelsArray.some(label => label.trim() === '')) {
             setError("Please make sure all fields are filled in correctly before submitting.");
             setLoading(false);
@@ -128,7 +126,7 @@ const ScaleTools = () => {
                                     <td>{scale.scale_name}</td>
                                     <td>{scale.scale_levels}</td>
                                     <td>{scale.scale_labels}</td>
-                                    <td><a className='m-0 text-decoration-underline text-black' style={{cursor: 'pointer'}} onClick={(e) => {
+                                    <td><a className='m-0 text-decoration-underline text-black' style={{cursor: 'pointer'}} onClick={() => {
                                         setScaleId(scale.id_scales);
                                         getSingleScale(scale.id_scales);
                                     }}><b>Edit scale</b></a></td>

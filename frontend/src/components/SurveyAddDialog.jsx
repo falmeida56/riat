@@ -6,7 +6,7 @@ const SurveyAddDialog = ({ dialogRef, setEditing, handleSurveySubmit }) => {
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     return (
         <dialog className="dialog" ref={dialogRef}>

@@ -7,7 +7,7 @@ const DeleteStatementDialog = ({ dialogRef, setDeletingStatement, id, handleDele
         if (dialogRef.current) {
             dialogRef.current.showModal();
         }
-    }, []);
+    }, [dialogRef]);
 
     const [inputValue, setInputValue] = useState('');
 

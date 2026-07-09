@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ProjectsAdminTable from "../components/ProjectsAdminTable";
 import ProjectsAdminDetail from "../components/ProjectsAdminDetail";
 import api from "../api";
@@ -9,7 +8,6 @@ const ProjectsAdmin = () => {
 
     // existing projects 
     const [projects, setProjects] = useState([]);
-    const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [projectsPerPage, setProjectsPerPage] = useState(10);
@@ -52,8 +50,6 @@ const ProjectsAdmin = () => {
                 setProjects(response.data);
             } catch (error) {
                 console.error("Error fetching projects:", error);
-            } finally {
-                
             }
         };
 
