@@ -105,22 +105,30 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_riat',
-        'USER': 'riat_admin',
-        'PASSWORD': 'F]v8x9*04_gS',
-    #   'NAME': 'db_riat',
-    #   'USER': 'riat_user',
-    #   'PASSWORD': 'i%Mnq9p@K^m.1dq%4rG8',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4'
+if os.getenv('DB_ENGINE', 'mysql').lower() == 'sqlite':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.getenv('SQLITE_DB_PATH', BASE_DIR / 'db.sqlite3'),
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'db_riat',
+            'USER': 'riat_admin',
+            'PASSWORD': 'F]v8x9*04_gS',
+        #   'NAME': 'db_riat',
+        #   'USER': 'riat_user',
+        #   'PASSWORD': 'i%Mnq9p@K^m.1dq%4rG8',
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'OPTIONS': {
+                'charset': 'utf8mb4'
+            }
+        }
+    }
 
 
 # Password validation
